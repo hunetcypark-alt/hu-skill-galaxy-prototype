@@ -573,9 +573,12 @@ function fillAround(id,dom,centerAngle,limit=PAGE,moreMode=false){
   const newIds=list.filter(x=>!S.pos[x]);
   const wide=id!==S.center,RR=wide?4:3,WEDGE_DEG=wide?150:80;   // 펼친 노드는 바깥쪽을 중심으로 넓게(≈300°) 흩뿌린다
   const cand=[];
-  for(let di=-RR;di<=RR;di++)for(let dj=-RR;dj<=RR;dj++){
-    if(!di&&!dj)continue;const i=o.i+di,j=o.j+dj;if(S.cells[ck(i,j)])continue;
-    const ring=Math.max(Math.abs(di),Math.abs(dj));
+  /* 사각 격자가 드러나지 않게: 실제 화면 거리(원)로 고리를 나누고 원 안의 칸만 쓴다 */
+  const RADIUS=wide?880:650,RS=wide?RR+3:RR+2;   // 화면 비율에 맞춰 가로로 약간 긴 원
+  for(let di=-RS;di<=RS;di++)for(let dj=-RS*2;dj<=RS*2;dj++){
+    if(!di&&!dj)continue;const eu=Math.hypot(di*CW/1.4,dj*CH);if(eu>RADIUS)continue;
+    const i=o.i+di,j=o.j+dj;if(S.cells[ck(i,j)])continue;
+    const ring=Math.max(1,Math.ceil(eu/270));
     const ang=Math.atan2(dj*CH,di*CW)*180/Math.PI;const da=Math.abs(((ang-centerAngle+540)%360)-180);
     cand.push({i,j,ring,da});
   }
