@@ -30,13 +30,24 @@ canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .cd.X span{color:#fff;font-weight:700}
 .cd.X{flex-direction:row!important;flex-wrap:nowrap!important;white-space:nowrap;padding:0 18px!important}.cd.X em{font-style:normal;display:block}.cd.X::before{display:none}
 .cd.X i{width:8px;height:8px;border-radius:50%;flex:none}
-.intro .cd{transition:width .6s cubic-bezier(.2,.8,.2,1),height .6s cubic-bezier(.2,.8,.2,1),transform .22s ease,background .22s,box-shadow .22s!important}
+.intro .cd{transition:width .4s cubic-bezier(.16,1,.3,1),height .4s cubic-bezier(.16,1,.3,1),transform .22s ease,background .22s,box-shadow .22s!important}
 body.intro .cd{overflow:hidden}
-body.intro .tl:not(.ctr) .cd .t,body.intro .tl:not(.ctr) .cd .sb,body.intro .tl:not(.ctr) .cd .mc{white-space:nowrap;animation:tin .4s ease .28s both}
-@keyframes tin{from{opacity:0}to{opacity:1}}
+body.intro .tl:not(.ctr) .cd .t,body.intro .tl:not(.ctr) .cd .sb,body.intro .tl:not(.ctr) .cd .mc{white-space:nowrap;animation:txin .3s ease .16s both}
+@keyframes txin{from{opacity:0}to{opacity:1}}
+body.intro .tl.new .in{animation-duration:.18s!important;animation-delay:0s!important}
 body.intro .tl[data-lod="3"] .cd{animation:tw 1.7s ease-in-out infinite}
 body.intro .tl:nth-child(3n) .cd{animation-delay:-.5s}body.intro .tl:nth-child(3n+1) .cd{animation-delay:-1.1s}
 @keyframes tw{0%,100%{filter:brightness(.85)}50%{filter:brightness(1.9)}}
+.tl .cd{animation:bob 6.4s ease-in-out infinite}
+.tl:nth-child(3n) .cd{animation-duration:7.8s;animation-delay:-2s}.tl:nth-child(3n+1) .cd{animation-duration:5.6s;animation-delay:-3.4s}.tl:nth-child(5n) .cd{animation-duration:8.6s;animation-delay:-5s}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -1px}}
+@media (prefers-reduced-motion:reduce){.tl .cd{animation:none!important}}
+.tl.pc .cd{box-shadow:inset 0 0 0 1.6px rgba(255,233,168,.92),0 0 24px -6px rgba(255,233,168,.55)!important}
+.lgd{position:absolute;left:138px;bottom:32px;z-index:5;display:flex;gap:12px;align-items:center;font-size:11px;color:#8c8c92;pointer-events:none}
+.lgd i{display:inline-block;width:22px;border-radius:2px;background:#bdbdc4;vertical-align:middle;margin-right:5px}
+.lgd .p{height:2px;background:#ffe9a8}
+@media (max-width:760px){.lgd{display:none}}
+.cir#bLines.off{opacity:.55}.cir#bLines.off::after{content:'';position:absolute;width:20px;height:1.6px;background:#e8e8ea;transform:rotate(-45deg);border-radius:1px}.cir#bLines{position:relative}
 .tl.flash .cd::before{display:block!important;content:'';position:absolute;inset:-3px;border-radius:inherit;pointer-events:none;animation:flr 1.1s ease-out 2}
 @keyframes flr{0%{box-shadow:0 0 0 0 rgba(255,255,255,.75),0 0 0 0 rgba(255,255,255,.5);opacity:1}70%{box-shadow:0 0 0 14px rgba(255,255,255,0),0 0 46px 10px rgba(255,255,255,.28);opacity:1}100%{box-shadow:0 0 0 18px rgba(255,255,255,0),0 0 50px 12px rgba(255,255,255,0);opacity:0}}
 .tl.ux .cd{box-shadow:inset 0 0 0 1.6px rgba(255,255,255,.8),0 0 0 5px rgba(255,255,255,.07),0 14px 30px -14px rgba(255,255,255,.45)!important;background:#2e2e32!important}
@@ -354,6 +365,7 @@ body.intro .tl:nth-child(3n) .cd{animation-delay:-.5s}body.intro .tl:nth-child(3
 </div>
 <div id="recent"></div>
 <div class="banner" id="banner"></div>
+<div class="lgd"><span>연관도</span><span><i style="height:1px"></i>낮음</span><span><i style="height:2px"></i>중간</span><span><i style="height:3px"></i>높음</span><span><i class="p"></i>경로</span></div>
 
 <div class="spb" id="sp">
   <div class="glass sbox"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.500-3.500"/></svg><input id="q" placeholder="스킬, 콘텐츠, 커리어를 검색해요" autocomplete="off"><button class="ib" id="qx" style="display:none"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -363,6 +375,7 @@ body.intro .tl:nth-child(3n) .cd{animation-delay:-.5s}body.intro .tl:nth-child(3
 <div class="nav" id="nav"></div>
 <div class="bl">
   <button class="cir" id="bFit" title="모두 보이기"><svg viewBox="0 0 24 24"><path d="M4 9V5h4M20 9V5h-4M4 15v4h4M20 15v4h-4"/></svg></button>
+  <button class="cir on" id="bLines" title="연결선 숨기기"><svg viewBox="0 0 24 24"><circle cx="5.500" cy="17" r="2.200"/><circle cx="18.500" cy="7" r="2.200"/><path d="M7.200 15.600 16.800 8.400"/></svg></button>
   <button class="cir" id="bCenter" title="중심으로"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button>
 </div>
 <div class="br"><div class="zm"><button id="zOut"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button><span id="zp">100%</span><button id="zIn"><svg viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></svg></button></div></div>
@@ -474,8 +487,17 @@ const cam={x:0,y:0,z:.9},tgt={x:0,y:0,z:.9},vel={x:0,y:0};
 const RANGE={};['skill','content','career'].forEach(t=>{const a=IDS.filter(i=>N[i].type===t).map(i=>Math.sqrt(N[i].cnt));RANGE[t]=[Math.min(...a),Math.max(...a)]});
 const sizeF=id=>{const [mn,mx]=RANGE[N[id].type];return (Math.sqrt(N[id].cnt)-mn)/((mx-mn)||1)};
 const isMore=id=>id.startsWith('m:');
+/* 연관도 단계(높음·중간·낮음) — 숫자는 보여주지 않고 선의 굵기·밝기로만 표현한다 */
+function relLv(a,b){const r=(REL[a]||[]).find(x=>x[0]===b)||(REL[b]||[]).find(x=>x[0]===a);if(!r)return 1;const s=SC(r[1]);return s>=.8?2:s>=.55?1:0}
+/* 커서를 따라 카드가 둥실 따라오는 시차 — 가까운(큰) 카드는 더, 먼 카드는 덜 */
+S.mx=0;S.my=0;S.sx=0;S.sy=0;
+function floatOff(id){if(isMore(id)||dragging)return {x:0,y:0};const A=2.5*(szS(id)+.2)*(1+depthF(id)*2);return {x:S.sx*A,y:S.sy*A}}
+function wposI(id){const b=wpos(id);if(!S.intro||id===S.center||isMore(id))return b;
+  const t=performance.now()-S.intro.t0,u=Math.max(0,Math.min(1,(t-(S.intro.at[id]??0)+140)/560)),f=1-Math.pow(1-u,3.2);
+  const c=wpos(S.center);return {x:c.x+(b.x-c.x)*f,y:c.y+(b.y-c.y)*f}}
 /* 인기(사람 수)에 따라 카드 크기가 달라진다 — 큰 별과 작은 별이 섞인 우주처럼 */
-const szS=id=>{if(isMore(id))return 1;if(id===S.center)return 1.16;const f=Math.max(0,Math.min(1,sizeF(id)));return .8+.4*Math.pow(f,.85)};
+const szB=id=>{if(isMore(id))return 1;if(id===S.center)return 1.16;return .8+.4*Math.pow(Math.max(0,Math.min(1,sizeF(id))),.85)};   // 선택과 무관한 기본 크기 배율(배치 간격 계산용)
+const szS=id=>{if(isMore(id))return 1;if(id===S.sel)return 1.1;if(id===S.center)return S.sel?1.0:1.16;const f=Math.max(0,Math.min(1,sizeF(id)));return .8+.4*Math.pow(f,.85)};
 const visible=id=>isMore(id)?!!S.legend[S.more[id].dom]:(id===S.center||S.legend[N[id].type]);
 const baseW=id=>{const o=S.off[id];return {x:S.pos[id].i*CW+(o?o.x:0),y:S.pos[id].j*CH+(o?o.y:0)}};
 const wpos=id=>{const b=baseW(id),n=S.nc&&S.nc[id];return n?{x:b.x+n.x,y:b.y+n.y}:b};
@@ -485,7 +507,7 @@ function computeNudge(){
   const ds=dimOf(S.sel),sw=baseW(S.sel);
   Object.keys(S.pos).forEach(id=>{if(id===S.sel||isMore(id)||!visible(id))return;
     const w=baseW(id),d=dimOf(id);
-    const ox=(ds.w+d.w)/2+34-Math.abs(w.x-sw.x),oy=(ds.h+d.h)/2+28-Math.abs(w.y-sw.y);
+    const ox=(ds.w*1.1+d.w*szB(id))/2+40-Math.abs(w.x-sw.x),oy=(ds.h*1.1+d.h*szB(id))/2+32-Math.abs(w.y-sw.y);
     if(ox>0&&oy>0){if(oy<ox)S.nt[id]={x:0,y:(w.y>=sw.y?1:-1)*oy};else S.nt[id]={x:(w.x>=sw.x?1:-1)*ox,y:0}}});
 }
 /* ── 카드는 내용에 맞춰(hug) 크기를 정한다: 실제 글꼴로 줄 바꿈과 폭을 재서 계산 ── */
@@ -496,7 +518,7 @@ function wrapInfo(t,fs,wt,maxW){let lines=1,cur='',widest=0;for(const w of t.spl
 const TIER={R:{fs:21,wt:600,px:22,py:20,min:230,max:320},L:{fs:17,wt:600,px:20,py:19,min:190,max:292},M:{fs:14.5,wt:500,px:18,py:17,min:172,max:264},S:{fs:13.5,wt:500,px:18,py:0,min:132,max:232}};
 const DOTW=31,SUBLH=17.5,SUBMT=9,PANEL=120,dimMemo={};
 /* 정보 단계(LOD)에 따라 실제로 보이는 카드 크기 */
-S.lodMap={};S.dist={};S.zoomFull=false;S.flat=false;S.hl=null;S.hlOwner=null;S.ux={};
+S.lodMap={};S.dist={};S.zoomFull=false;S.flat=false;S.hl=null;S.hlOwner=null;S.ux={};S.path=[];
 /* 정보 단계와 깊이는 '지금 보는 노드로부터 그래프상 몇 칸'으로만 정한다 — 드래그해도 변하지 않는다 */
 function computeLod(){
   S.dist={};const f=S.sel&&S.pos[S.sel]?S.sel:S.center;if(!S.pos[f])return;const fb=baseW(f);
@@ -520,7 +542,7 @@ function dimOf(id){
   if(isMore(id))return{k:'X',w:176,h:46};
   const n=N[id],root=id===S.center,ex=S.sel===id;
   let k;
-  if(root)k='R';else{const f=sizeF(id),p=S.pos[id],c=S.pos[S.center];const ring=p&&c?Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j)):1;k=ring<=2?(f>.45?'L':'M'):ring===3?(f>.5?'M':'S'):'S';if(S.flat&&k==='S')k='M'}
+  if(root)k=(S.sel&&S.sel!==id)?'L':'R';else if(ex)k='R';else{const f=sizeF(id),p=S.pos[id],c=S.pos[S.center];const ring=p&&c?Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j)):1;k=ring<=2?(f>.45?'L':'M'):ring===3?(f>.5?'M':'S'):'S';if(S.flat&&k==='S')k='M'}
   const key=id+'|'+k+'|'+(ex?1:0)+'|'+(S.login?1:0);if(dimMemo[key])return dimMemo[key];
   const T0=TIER[k],py=ex&&k==='S'?18:T0.py,px=T0.px,sub=subOf(n);
   let w,h,th=54;
@@ -550,12 +572,12 @@ function jitter(ids){
   for(let it=0;it<70;it++){let moved=false;
     ids.forEach(a=>{const wa=wpos(a),da=dimOf(a);
       Object.keys(S.pos).forEach(b=>{if(a===b)return;const wb=wpos(b),db=dimOf(b);
-        const ox=(da.w+db.w)/2+46-Math.abs(wa.x-wb.x),oy=(da.h+db.h)/2+40-Math.abs(wa.y-wb.y);
+        const sa_=szB(a),sb_=szB(b),ox=(da.w*sa_+db.w*sb_)/2+54-Math.abs(wa.x-wb.x),oy=(da.h*sa_+db.h*sb_)/2+46-Math.abs(wa.y-wb.y);
         if(ox>0&&oy>0){moved=true;const w=set.has(b)?.5:1;
           if(oy<ox){const s=wa.y>=wb.y?1:-1;S.off[a].y+=s*oy*w;if(set.has(b))S.off[b].y-=s*oy*.5}
           else{const s=wa.x>=wb.x?1:-1;S.off[a].x+=s*ox*w;if(set.has(b))S.off[b].x-=s*ox*.5}}})});
     if(!moved)break}
-  ids.forEach(id=>{const o=S.off[id];o.x=Math.max(-130,Math.min(130,o.x));o.y=Math.max(-90,Math.min(90,o.y))});
+  ids.forEach(id=>{const o=S.off[id];o.x=Math.max(-160,Math.min(160,o.x));o.y=Math.max(-115,Math.min(115,o.y))});
 }
 /* 정책(11/25 회의): 연관도 0.8 이상 · 높은 순 · 최대 10개를 먼저 펼치고, 더 보고 싶으면 더보기로 10개씩.
    샘플 데이터의 점수가 낮게 깔려 있어 SC 로 보정해 같은 기준(0.8)으로 자른다 */
@@ -574,18 +596,24 @@ function fillAround(id,dom,centerAngle,limit=PAGE,moreMode=false){
   const wide=id!==S.center,RR=wide?4:3,WEDGE_DEG=wide?150:80;   // 펼친 노드는 바깥쪽을 중심으로 넓게(≈300°) 흩뿌린다
   const cand=[];
   /* 사각 격자가 드러나지 않게: 실제 화면 거리(원)로 고리를 나누고 원 안의 칸만 쓴다 */
-  const RADIUS=wide?880:650,RS=wide?RR+3:RR+2;   // 화면 비율에 맞춰 가로로 약간 긴 원
-  for(let di=-RS;di<=RS;di++)for(let dj=-RS*2;dj<=RS*2;dj++){
-    if(!di&&!dj)continue;const eu=Math.hypot(di*CW/1.4,dj*CH);if(eu>RADIUS)continue;
-    const i=o.i+di,j=o.j+dj;if(S.cells[ck(i,j)])continue;
-    const ring=Math.max(1,Math.ceil(eu/270));
-    const ang=Math.atan2(dj*CH,di*CW)*180/Math.PI;const da=Math.abs(((ang-centerAngle+540)%360)-180);
-    cand.push({i,j,ring,da});
+  const need=Math.min(limit,newIds.length)+2;
+  // 주변이 빽빽하면(이미 노드가 많이 펼쳐진 곳) 빈 칸이 모자라니, 충분해질 때까지 반경을 넓힌다
+  for(const sc of [1,1.3,1.65,2.1,2.7,3.5]){
+    cand.length=0;
+    const RADIUS=(wide?880:650)*sc,RS=Math.ceil((wide?RR+3:RR+2)*sc);   // 화면 비율에 맞춰 가로로 약간 긴 원
+    for(let di=-RS;di<=RS;di++)for(let dj=-RS*2;dj<=RS*2;dj++){
+      if(!di&&!dj)continue;const eu=Math.hypot(di*CW/1.4,dj*CH);if(eu>RADIUS)continue;
+      const i=o.i+di,j=o.j+dj;if(S.cells[ck(i,j)])continue;
+      const ring=Math.max(1,Math.ceil(eu/270));
+      const ang=Math.atan2(dj*CH,di*CW)*180/Math.PI;const da=Math.abs(((ang-centerAngle+540)%360)-180);
+      cand.push({i,j,ring,da});
+    }
+    if(cand.length>=need)break;
   }
   cand.sort((a,b)=>(a.ring-b.ring)||(a.da-b.da));
   const near=cand.filter(c=>c.da<=WEDGE_DEG);
   const pool=near.length>=newIds.length+1?near:cand;
-  const take=newIds.slice(0,limit);
+  const take=newIds.slice(0,Math.min(limit,pool.length));
   pool.slice(0,take.length).forEach((c,k)=>{placeAt(take[k],c.i,c.j);S.parent[take[k]]=id;S.fresh.add(take[k])});
   jitter(take);
   S.exp[id]=S.exp[id]||{};S.exp[id][dom]=take.slice();
@@ -606,16 +634,18 @@ function showMore(mid){
   flashIds(res.added);(S.ux[m.pid]=S.ux[m.pid]||new Set());res.added.forEach(x=>S.ux[m.pid].add(x));S.hl=new Set(res.added);S.hlOwner=m.pid;banner(`${T[m.dom]} ${res.added.length}개를 더 펼쳤어요`);render();focusGroup([m.pid,...S.exp[m.pid][m.dom]]);
 }
 function build(id){
-  S.center=id;S.entering=true;S.born={};S.pos={};S.cells={};S.off={};S.nt={};S.nc={};S.parent={};S.exp={};S.more={};S.fresh=new Set();S.hl=null;S.ux={};S.recent=[];S.sel=null;S.panel=false;
+  S.center=id;S.entering=true;S.born={};S.pos={};S.cells={};S.off={};S.nt={};S.nc={};S.parent={};S.exp={};S.more={};S.fresh=new Set();S.hl=null;S.ux={};S.path=[id];S.recent=[];S.sel=null;S.panel=false;
   placeAt(id,0,0);['skill','content','career'].forEach(d=>fillAround(id,d,WEDGE[d]));
   cam.x=tgt.x=0;cam.y=tgt.y=0;cam.z=tgt.z=.9;vel.x=vel.y=0;
   /* 입장 연출: 모든 노드가 아이콘(별)으로 먼저 떠 있다가, 중심부터 바깥으로 차례로 카드로 펼쳐진다 */
   {const c=S.pos[id],at={};at[id]=0;   // 중심 카드는 처음부터 카드로 보인다
-   Object.keys(S.pos).filter(k=>k!==id&&!isMore(k)).map(k=>{const p=S.pos[k],ring=Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j));return {k,ring,a:Math.atan2((p.j-c.j)*CH,(p.i-c.i)*CW)}}).sort((x,y)=>x.ring-y.ring||x.a-y.a).forEach((o,i)=>{at[o.k]=900+i*85});
-   Object.keys(S.pos).filter(isMore).forEach(k=>at[k]=2000+Object.keys(at).length*40);
+   Object.keys(S.pos).filter(k=>k!==id&&!isMore(k)).map(k=>{const p=S.pos[k],ring=Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j));return {k,ring,a:Math.atan2((p.j-c.j)*CH,(p.i-c.i)*CW)}}).sort((x,y)=>x.ring-y.ring||x.a-y.a).forEach((o,i)=>{at[o.k]=380+Math.min(o.ring,4)*45});
+   Object.keys(S.pos).filter(isMore).forEach(k=>at[k]=620);
    S.intro={t0:performance.now(),at,end:Math.max(...Object.values(at))+700};document.body.classList.add('intro')}
 }
 function pushRecent(id){S.recent=S.recent.filter(x=>x!==id);S.recent.unshift(id);S.recent=S.recent.slice(0,6)}
+/* 경로: 펼친 중심 노드를 순서대로 기억해 서로 이어 보여준다 */
+function pushPath(id){const i=S.path.indexOf(id);if(i>=0)S.path=S.path.slice(0,i+1);else S.path.push(id)}
 function expandDom(id,dom){
   if(!S.legend[dom]){banner(`하단에서 ${T[dom]}가 꺼져 있어요`);return}
   if(S.exp[id]&&S.exp[id].hasOwnProperty(dom)){
@@ -630,9 +660,9 @@ function expandDom(id,dom){
   const ang=id===S.center?WEDGE[dom]:Math.atan2((r0.j-rc.j)*CH,(r0.i-rc.i)*CW)*180/Math.PI;
   const res=fillAround(id,dom,ang);
   if(!res.list.length){delete S.exp[id][dom];banner(`연관 ${T[dom]}가 없어요`);return}
-  if(!res.added.length){S.exp[id][dom]=[];(S.ux[id]=S.ux[id]||new Set());res.list.forEach(x=>S.ux[id].add(x));S.hl=new Set(res.list);S.hlOwner=id;banner(`연관 ${T[dom]} ${res.list.length}개가 이미 바로 옆에 있어요`);render();focusGroup([id,...res.list]);return}
+  if(!res.added.length){S.exp[id][dom]=[];(S.ux[id]=S.ux[id]||new Set());res.list.forEach(x=>S.ux[id].add(x));pushPath(id);S.hl=new Set(res.list);S.hlOwner=id;banner(`연관 ${T[dom]} ${res.list.length}개가 이미 바로 옆에 있어요`);render();focusGroup([id,...res.list]);return}
   const linked=res.list.length-res.added.length;
-  flashIds(res.list);(S.ux[id]=S.ux[id]||new Set());res.list.forEach(x=>S.ux[id].add(x));S.hl=new Set(res.list);S.hlOwner=id;
+  pushPath(id);flashIds(res.list);(S.ux[id]=S.ux[id]||new Set());res.list.forEach(x=>S.ux[id].add(x));S.hl=new Set(res.list);S.hlOwner=id;
   const nm=res.list.slice(0,2).map(x=>N[x].name).join(', ');
   banner(`연관 ${T[dom]} ${res.list.length}개를 펼쳤어요 · ${nm}${res.list.length>2?` 외 ${res.list.length-2}개`:''}`);
   pushRecent(id);render();focusGroup([id,...res.added]);
@@ -721,13 +751,13 @@ function draw(){
   // 타일 — 2D 이동·확대만 쓰고, 값이 바뀔 때만 DOM 에 쓴다(흐림·3D 회전 없음)
   document.querySelectorAll('.tl').forEach(el=>{
     const id=el.dataset.id,p0=S.pos[id];if(!p0)return;
-    const w=wpos(id),p=proj(w.x,w.y,depthF(id));
+    const w=wposI(id),p=proj(w.x,w.y,depthF(id));
     const off=(p.r>2.1||p.x<-300||p.x>W+300||p.y<-260||p.y>H+260);
     if(off){if(el._off!==true){el.style.display='none';el._off=true}return}
     if(el._off!==false){el.style.display='';el._off=false}
-    const tf=`translate(${(p.x-CW/2).toFixed(1)}px,${(p.y-CH/2).toFixed(1)}px) scale(${(p.s*cardM(p.r)*szS(id)*(S.sel===id?1.03:1)).toFixed(3)})`;
+    const fo=floatOff(id);const tf=`translate(${(p.x-CW/2+fo.x).toFixed(1)}px,${(p.y-CH/2+fo.y).toFixed(1)}px) scale(${(p.s*cardM(p.r)*szS(id)*(S.sel===id?1.03:1)).toFixed(3)})`;
     if(el._tf!==tf){el.style.transform=tf;el._tf=tf}
-    const zi=Math.round(1000-p.r*500)+(S.sel===id?400:0);
+    const zi=Math.round(1000-p.r*500)+(S.sel===id?400:0)+(S.intro&&id===S.center?3000:0);   // 펼쳐지는 동안 마이커리어 카드가 맨 위
     if(el._zi!==zi){el.style.zIndex=zi;el._zi=zi}
     const inn=el.firstElementChild;
     const focus=(S.sel===id||S.hover===id);
@@ -735,6 +765,7 @@ function draw(){
     if(S.hl&&S.hlOwner!==S.sel)S.hl=null;
     const inHl=!!(S.hl&&S.hl.has(id)),isOwn=!!(S.hl&&id===S.hlOwner);
     if(el._hl!==inHl){el.classList.toggle('hl',inHl);el._hl=inHl}
+    const isPc=S.path.length>1&&S.path.includes(id);if(el._pc!==isPc){el.classList.toggle('pc',isPc);el._pc=isPc}
     const isUx=!!(S.sel&&S.ux[S.sel]&&S.ux[S.sel].has(id));if(el._hl!==false&&!inHl){}if(el._ux!==isUx){el.classList.toggle('ux',isUx);el._ux=isUx}
     const uxSet=S.sel&&S.ux[S.sel]&&S.ux[S.sel].size?S.ux[S.sel]:null;   // 지금 선택한 카드에서 펼친 노드 전부
     let opv=focus?1:Math.min(distOp(id),dkf);
@@ -757,6 +788,7 @@ function edgeList(){
   const ids=Object.keys(S.pos).filter(visible);const set=new Set(ids);const out=[];const seen=new Set();
   ids.forEach(a=>{const p=S.parent[a];if(p&&!isMore(a)&&set.has(p)){seen.add([a,p].sort().join());out.push([p,a])}});
   ids.filter(a=>!isMore(a)).forEach(a=>REL[a].forEach(([b,w])=>{if(w>=.97&&set.has(b)&&a<b&&!seen.has([a,b].join())){seen.add([a,b].join());out.push([a,b])}}));
+  for(let i=0;i+1<S.path.length;i++){const a=S.path[i],b=S.path[i+1];if(set.has(a)&&set.has(b))out.push([a,b,'path'])}
   // 방금 펼친 노드는 전부 선으로 잇는다 — 무엇이 펼쳐졌는지 보이게
   if(S.hl&&S.hlOwner&&set.has(S.hlOwner))S.hl.forEach(b=>{if(b!==S.hlOwner&&set.has(b)){const k=[S.hlOwner,b].sort().join();if(!seen.has(k)){seen.add(k);out.push([S.hlOwner,b])}}});
   // 선택·호버한 카드는 연관도가 가장 높은 4개까지만 선으로 잇는다(전부 이으면 선이 뭉친다)
@@ -784,12 +816,27 @@ const bez=(P,c1,c2,Q,n)=>{const o=[];for(let i=0;i<=n;i++){const t=i/n,u=1-t;o.p
 function hasHot(){return !!((S.hover&&!isMore(S.hover))||S.sel)}
 const cardOp=id=>{if(S.sel===id||S.hover===id)return 1;return Math.min(distOp(id),1-DK*.3)};
 function drawPorts(PO){gP.clearRect(0,0,W,H)}   // 포트(반원·점)는 그리지 않는다 — 선이 카드 가장자리에서 시작하고 끝난다
+/* 은하수처럼: 넓고 옅은 빛 번짐 위에 얇은 심선, 그리고 빛 알갱이가 천천히 흘러간다 */
+function milky(pts,P,Q,idx,now,bf,warm,w){
+  const col=warm?'255,226,170':'236,238,255';
+  const stroke=(lw,al)=>{const gr=gE.createLinearGradient(P.x,P.y,Q.x,Q.y);gr.addColorStop(0,`rgba(${col},0)`);gr.addColorStop(.16,`rgba(${col},1)`);gr.addColorStop(.84,`rgba(${col},1)`);gr.addColorStop(1,`rgba(${col},0)`);
+    gE.strokeStyle=gr;gE.lineWidth=lw;gE.lineCap='round';gE.globalAlpha=bf*al;gE.beginPath();pts.forEach((r,i)=>i?gE.lineTo(r.x,r.y):gE.moveTo(r.x,r.y));gE.stroke()};
+  stroke(w*5.5,.06);stroke(w*2.6,.12);stroke(w*1.1,.62);
+  // 흐르는 빛 알갱이
+  for(let k=0;k<4;k++){const t=((now*.07+k*.25+idx*.173)%1);const i=Math.min(pts.length-1,Math.floor(t*(pts.length-1)));const p=pts[i];
+    const fade=Math.sin(Math.PI*t);const gr=gE.createRadialGradient(p.x,p.y,0,p.x,p.y,w*5);gr.addColorStop(0,`rgba(${col},${.85*fade})`);gr.addColorStop(1,`rgba(${col},0)`);
+    gE.globalAlpha=bf;gE.fillStyle=gr;gE.beginPath();gE.arc(p.x,p.y,w*5,0,6.2832);gE.fill()}
+  gE.globalAlpha=1;
+}
+S.lines=true;try{S.lines=localStorage.getItem('hg_lines')!=='0'}catch(e){}
 function drawEdges(){
+  if(S.lines===false){gE.clearRect(0,0,W,H);return}
   gE.clearRect(0,0,W,H);const PO=[];const nowMs=performance.now();const hot=S.hover&&!isMore(S.hover)?S.hover:S.sel;const now=performance.now()/1000;
   edgeList().forEach(([a,b,kind],idx)=>{
-    const wa=wpos(a),wb=wpos(b),pa=proj(wa.x,wa.y,depthF(a)),pb=proj(wb.x,wb.y,depthF(b)),da=effDims(a),db=effDims(b);
+    const wa=wposI(a),wb=wposI(b),pa=proj(wa.x,wa.y,depthF(a)),pb=proj(wb.x,wb.y,depthF(b)),da=effDims(a),db=effDims(b);
     const sa=pa.s*cardM(pa.r)*szS(a)*(S.sel===a?1.03:1),sb=pb.s*cardM(pb.r)*szS(b)*(S.sel===b?1.03:1);
     const hwa=da.w/2*sa,hwb=db.w/2*sb,hha=da.h/2*sa,hhb=db.h/2*sb;
+    const fa=floatOff(a),fb=floatOff(b);pa.x+=fa.x;pa.y+=fa.y;pb.x+=fb.x;pb.y+=fb.y;
     const dx=pb.x-pa.x,dy=pb.y-pa.y;let P,Q,h,sg;
     if(Math.abs(dx)>(hwa+hwb)*.5){sg=dx>0?1:-1;h=true;P={x:pa.x+sg*hwa,y:pa.y};Q={x:pb.x-sg*hwb,y:pb.y}}
     else{sg=dy>0?1:-1;h=false;P={x:pa.x,y:pa.y+sg*hha};Q={x:pb.x,y:pb.y-sg*hhb}}
@@ -798,18 +845,31 @@ function drawEdges(){
     // 카드가 나타나는 속도(0.3초)와 똑같이 선도 함께 나타난다 — 선이 먼저 뻗어 있지 않게
     const bd=S.born[b]===undefined?1:Math.max(0,Math.min(1,(nowMs-S.born[b])/300)),bf=bd*bd*(3-2*bd);
     // 곡선: 카드 변에서 곧게 나와 부드럽게 휘어 들어간다(직선 노선도 방식은 orthoRoute 로 남겨 둠)
-    const kk=Math.max(40,(h?Math.abs(Q.x-P.x):Math.abs(Q.y-P.y))*.5);
-    const c1={x:h?P.x+sg*kk:P.x,y:h?P.y:P.y+sg*kk},c2={x:h?Q.x-sg*kk:Q.x,y:h?Q.y:Q.y-sg*kk};
-    const pts=bez(P,c1,c2,Q,48),poly=pts;
+    // 별자리처럼: 두 카드의 중심을 향해 나와서, 아주 살짝 휘어진 가는 선으로 이어진다(끝은 카드 쪽에서 서서히 사라진다)
+    const exitPt=(cx,cy,hw,hh2,tx,ty)=>{const ddx=tx-cx,ddy=ty-cy;const t=Math.min(hw/Math.max(Math.abs(ddx),1e-3),hh2/Math.max(Math.abs(ddy),1e-3));return {x:cx+ddx*t,y:cy+ddy*t}};
+    P=exitPt(pa.x,pa.y,hwa,hha,pb.x,pb.y);Q=exitPt(pb.x,pb.y,hwb,hhb,pa.x,pa.y);
+    if(kind==='path'||on){   // 선 끝이 둥근 카드 모서리에서 떠 보이지 않게 카드 안쪽(카드가 덮는 자리)까지 넣되, 곡선은 이 끝점으로 다시 계산한다
+      const inw=(o,c,d)=>{const vx=c.x-o.x,vy=c.y-o.y,l=Math.hypot(vx,vy)||1;return {x:o.x+vx/l*d,y:o.y+vy/l*d}};
+      P=inw(P,pa,11);Q=inw(Q,pb,11)}
+    const LL=Math.hypot(Q.x-P.x,Q.y-P.y)||1,nx=-(Q.y-P.y)/LL,ny=(Q.x-P.x)/LL;
+    const hs=((hue(a)*31+hue(b)*17)%100)/100,cv=(hs-.5)*2*LL*(kind==='path'?.05:.17);   // 경로선은 거의 곧게
+    const cpx=(P.x+Q.x)/2+nx*cv,cpy=(P.y+Q.y)/2+ny*cv;
+    const pts=[];for(let i=0;i<=40;i++){const t=i/40,u=1-t;pts.push({x:u*u*P.x+2*u*t*cpx+t*t*Q.x,y:u*u*P.y+2*u*t*cpy+t*t*Q.y})}const poly=pts;
+    if(kind==='path'){
+      gE.lineCap='round';gE.lineJoin='round';
+      gE.beginPath();pts.forEach((r,i)=>i?gE.lineTo(r.x,r.y):gE.moveTo(r.x,r.y));
+      gE.strokeStyle='#ffe9a8';gE.lineWidth=8;gE.globalAlpha=.14*bf;gE.stroke();   // 은은한 빛 번짐
+      gE.lineWidth=2.2;gE.globalAlpha=.95*bf;gE.stroke();gE.globalAlpha=1;return}   // 점선 대신 실선 + 은은한 빛 번짐, 빛 알갱이가 이동 방향(지난 노드 → 다음 노드)으로 흐른다
+    const lv=kind==='more'?1:relLv(a,b);
     // 기본: 머리카락처럼 가는 선
     gE.setLineDash(kind==='more'?[3,6]:[]);
     gE.lineJoin='round';gE.beginPath();poly.forEach((r,i)=>i?gE.lineTo(r.x,r.y):gE.moveTo(r.x,r.y));
-    gE.strokeStyle='#a9a9ad';gE.lineWidth=.8;
-    gE.globalAlpha=bf*(on?0:(hot?.05:(kind==='more'?.2:.24)));if(!on)gE.stroke();gE.setLineDash([]);
+    {const gr=gE.createLinearGradient(P.x,P.y,Q.x,Q.y);gr.addColorStop(0,'rgba(190,190,196,0)');gr.addColorStop(.14,'rgba(190,190,196,1)');gr.addColorStop(.86,'rgba(190,190,196,1)');gr.addColorStop(1,'rgba(190,190,196,0)');gE.strokeStyle=gr}gE.lineWidth=[.6,.9,1.35][lv];
+    gE.globalAlpha=bf*(on?0:(hot?.05:(kind==='more'?.2:.24*[.75,1,1.25][lv])));if(!on)gE.stroke();gE.setLineDash([]);
     // 연결된 선: 선 전체가 옅게 빛나고, 가장 밝은 부분이 아주 천천히 오간다(머리·꼬리·번짐 없음)
     if(on){
       const ph=.5+.62*Math.sin(now*.5+idx*1.3);
-      gE.strokeStyle='#ffffff';gE.lineWidth=1.1;gE.lineCap='butt';
+      gE.strokeStyle='#ffffff';gE.lineWidth=[.9,1.2,1.7][lv];gE.lineCap='butt';
       for(let i2=0;i2<pts.length-1;i2++){const t=(i2+.5)/(pts.length-1);
         gE.globalAlpha=bf*(.34+.5*Math.exp(-Math.pow((t-ph)/.3,2)));
         gE.beginPath();gE.moveTo(pts[i2].x,pts[i2].y);gE.lineTo(pts[i2+1].x,pts[i2+1].y);gE.stroke()}
@@ -847,18 +907,19 @@ function frame(){
   const fts=S.panel&&!mobile()?176:0;fsh+=(fts-fsh)*.16;
   let nm=false;{const keys=new Set([...Object.keys(S.nt),...Object.keys(S.nc)]);keys.forEach(id=>{const t=S.nt[id]||{x:0,y:0},c=S.nc[id]||(S.nc[id]={x:0,y:0});c.x+=(t.x-c.x)*.2;c.y+=(t.y-c.y)*.2;if(Math.abs(t.x-c.x)>.4||Math.abs(t.y-c.y)>.4)nm=true;else{c.x=t.x;c.y=t.y;if(!S.nt[id])delete S.nc[id]}})}
   guardCam();
+  S.sx+=(S.mx-S.sx)*.05;S.sy+=(S.my-S.sy)*.05;
   cam.x+=(tgt.x-cam.x)*k;cam.y+=(tgt.y-cam.y)*k;cam.z+=(tgt.z-cam.z)*.14;
   const gl=Math.abs(vel.x)>.03||Math.abs(vel.y)>.03;
   if(!dragging&&gl){tgt.x+=vel.x;tgt.y+=vel.y;vel.x*=.93;vel.y*=.93}
   draw();
   if(S.intro&&performance.now()-S.intro.t0>S.intro.end){S.intro=null;document.body.classList.remove('intro')}
-  const moving=!!S.intro||dragging||gl||nm||hasHot()||(performance.now()-S.lastBorn<420)||Math.abs((S.panel&&!mobile()?176:0)-fsh)>.4||Math.abs(tgt.x-cam.x)>.06||Math.abs(tgt.y-cam.y)>.06||Math.abs(tgt.z-cam.z)>.0006;
+  const moving=!!S.intro||Math.abs(S.mx-S.sx)>.002||Math.abs(S.my-S.sy)>.002||dragging||gl||nm||hasHot()||(performance.now()-S.lastBorn<420)||Math.abs((S.panel&&!mobile()?176:0)-fsh)>.4||Math.abs(tgt.x-cam.x)>.06||Math.abs(tgt.y-cam.y)>.06||Math.abs(tgt.z-cam.z)>.0006;
   if(moving)raf=requestAnimationFrame(frame);
 }
 function focusNode(id,force){
   const p=S.pos[id];if(!p)return;const w=wpos(id);
   const mb=innerWidth<=760;
-  tgt.z=mb?.85:Math.max(tgt.z,1.2);vel.x=vel.y=0;
+  tgt.z=mb?.85:Math.max(tgt.z,.8);   // 카드를 눌렀을 때 너무 가까이 당기지 않는다vel.x=vel.y=0;
   tgt.x=w.x;tgt.y=w.y+(mb&&S.panel?H*.25/tgt.z:0);kick();   // 모바일: 시트가 올라온 만큼 카드를 위로
 }
 function focusGroup(ids){
@@ -896,6 +957,8 @@ addEventListener('pointerup',e=>{if(!pan)return;const p=pan;pan=null;dragging=fa
   if(!p.onTile&&!e.target.closest('.ft')&&!e.target.closest('.nav')){S.sel=null;closePanel();render()}});
 /* 곡면 투영의 역: 화면에서 초점 중심으로부터의 거리 → 곡면 적용 전 거리 */
 function invDelta(ox,oy,A_){let dx=ox,dy=oy;const R=Math.hypot(W,H)*.52;for(let i=0;i<10;i++){const f=1+A_*((dx*dx+dy*dy)/(R*R));dx=ox*f;dy=oy*f}return {dx,dy}}
+stage.addEventListener('pointermove',e=>{if(e.pointerType==='touch'||dragging)return;const r=stageBox();S.mx=Math.max(-1,Math.min(1,(e.clientX-r.left-r.width/2)/(r.width/2)));S.my=Math.max(-1,Math.min(1,(e.clientY-r.top-r.height/2)/(r.height/2)));kick()});
+stage.addEventListener('pointerleave',()=>{S.mx=0;S.my=0;kick()});
 stage.addEventListener('wheel',e=>{
   e.preventDefault();
   const r=stageBox();let ox=e.clientX-r.left-(W/2-fsh),oy=e.clientY-r.top-H/2;
@@ -924,7 +987,7 @@ if(window.ResizeObserver)new ResizeObserver(()=>resize()).observe(document.getEl
 const mobile=()=>innerWidth<=760;
 const fmt=v=>Number.isInteger(+v.toFixed(1))?String(Math.round(v)):v.toFixed(1);
 function select(id){
-  const was=S.panel;S.sel=id;S.panel=true;
+  const was=S.panel;S.sel=id;S.panel=true;pushPath(id);
   render();openPanel();
   focusNode(id,true);
 }
@@ -1031,6 +1094,10 @@ function start(){
 }
 $('#seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));start()});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#scrim').classList.contains('on')){closePanel();S.sel=null;render()}});
+const _bl=$('#bLines');
+function syncLines(){_bl.classList.toggle('off',!S.lines);_bl.classList.toggle('on',S.lines);_bl.title=S.lines?'연결선 숨기기':'연결선 보기'}
+syncLines();
+_bl.addEventListener('click',()=>{S.lines=!S.lines;try{localStorage.setItem('hg_lines',S.lines?'1':'0')}catch(e){}syncLines();banner(S.lines?'연결선을 보여줘요':'연결선을 숨겼어요');kick()});
 start();
 </script>
 </body>
