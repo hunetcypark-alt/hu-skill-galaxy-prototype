@@ -30,6 +30,13 @@ canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .cd.X span{color:#fff;font-weight:700}
 .cd.X{flex-direction:row!important;flex-wrap:nowrap!important;white-space:nowrap;padding:0 18px!important}.cd.X em{font-style:normal;display:block}.cd.X::before{display:none}
 .cd.X i{width:8px;height:8px;border-radius:50%;flex:none}
+.intro .cd{transition:width .6s cubic-bezier(.2,.8,.2,1),height .6s cubic-bezier(.2,.8,.2,1),transform .22s ease,background .22s,box-shadow .22s!important}
+body.intro .cd{overflow:hidden}
+body.intro .tl:not(.ctr) .cd .t,body.intro .tl:not(.ctr) .cd .sb,body.intro .tl:not(.ctr) .cd .mc{white-space:nowrap;animation:tin .4s ease .28s both}
+@keyframes tin{from{opacity:0}to{opacity:1}}
+body.intro .tl[data-lod="3"] .cd{animation:tw 1.7s ease-in-out infinite}
+body.intro .tl:nth-child(3n) .cd{animation-delay:-.5s}body.intro .tl:nth-child(3n+1) .cd{animation-delay:-1.1s}
+@keyframes tw{0%,100%{filter:brightness(.85)}50%{filter:brightness(1.9)}}
 .tl.flash .cd::before{display:block!important;content:'';position:absolute;inset:-3px;border-radius:inherit;pointer-events:none;animation:flr 1.1s ease-out 2}
 @keyframes flr{0%{box-shadow:0 0 0 0 rgba(255,255,255,.75),0 0 0 0 rgba(255,255,255,.5);opacity:1}70%{box-shadow:0 0 0 14px rgba(255,255,255,0),0 0 46px 10px rgba(255,255,255,.28);opacity:1}100%{box-shadow:0 0 0 18px rgba(255,255,255,0),0 0 50px 12px rgba(255,255,255,0);opacity:0}}
 .tl.ux .cd{box-shadow:inset 0 0 0 1.6px rgba(255,255,255,.8),0 0 0 5px rgba(255,255,255,.07),0 14px 30px -14px rgba(255,255,255,.45)!important;background:#2e2e32!important}
@@ -467,6 +474,8 @@ const cam={x:0,y:0,z:.9},tgt={x:0,y:0,z:.9},vel={x:0,y:0};
 const RANGE={};['skill','content','career'].forEach(t=>{const a=IDS.filter(i=>N[i].type===t).map(i=>Math.sqrt(N[i].cnt));RANGE[t]=[Math.min(...a),Math.max(...a)]});
 const sizeF=id=>{const [mn,mx]=RANGE[N[id].type];return (Math.sqrt(N[id].cnt)-mn)/((mx-mn)||1)};
 const isMore=id=>id.startsWith('m:');
+/* 인기(사람 수)에 따라 카드 크기가 달라진다 — 큰 별과 작은 별이 섞인 우주처럼 */
+const szS=id=>{if(isMore(id))return 1;if(id===S.center)return 1.16;const f=Math.max(0,Math.min(1,sizeF(id)));return .8+.4*Math.pow(f,.85)};
 const visible=id=>isMore(id)?!!S.legend[S.more[id].dom]:(id===S.center||S.legend[N[id].type]);
 const baseW=id=>{const o=S.off[id];return {x:S.pos[id].i*CW+(o?o.x:0),y:S.pos[id].j*CH+(o?o.y:0)}};
 const wpos=id=>{const b=baseW(id),n=S.nc&&S.nc[id];return n?{x:b.x+n.x,y:b.y+n.y}:b};
@@ -494,6 +503,7 @@ function computeLod(){
   Object.keys(S.pos).forEach(id=>{const b=baseW(id);S.dist[id]=Math.hypot((b.x-fb.x)/CW,(b.y-fb.y)/CH)});
 }
 function lodOf(id){
+  if(S.intro&&performance.now()-S.intro.t0<(S.intro.at[id]??0))return 3;
   if(id===(S.sel||S.center)||S.zoomFull)return 0;
   const d=S.dist[id];if(d===undefined)return 0;
   const k=innerWidth<=760?.7:1;return d<=2.6*k?0:d<=3.6*k?1:d<=4.6*k?2:3;
@@ -596,6 +606,11 @@ function build(id){
   S.center=id;S.entering=true;S.born={};S.pos={};S.cells={};S.off={};S.nt={};S.nc={};S.parent={};S.exp={};S.more={};S.fresh=new Set();S.hl=null;S.ux={};S.recent=[];S.sel=null;S.panel=false;
   placeAt(id,0,0);['skill','content','career'].forEach(d=>fillAround(id,d,WEDGE[d]));
   cam.x=tgt.x=0;cam.y=tgt.y=0;cam.z=tgt.z=.9;vel.x=vel.y=0;
+  /* 입장 연출: 모든 노드가 아이콘(별)으로 먼저 떠 있다가, 중심부터 바깥으로 차례로 카드로 펼쳐진다 */
+  {const c=S.pos[id],at={};at[id]=0;   // 중심 카드는 처음부터 카드로 보인다
+   Object.keys(S.pos).filter(k=>k!==id&&!isMore(k)).map(k=>{const p=S.pos[k],ring=Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j));return {k,ring,a:Math.atan2((p.j-c.j)*CH,(p.i-c.i)*CW)}}).sort((x,y)=>x.ring-y.ring||x.a-y.a).forEach((o,i)=>{at[o.k]=900+i*85});
+   Object.keys(S.pos).filter(isMore).forEach(k=>at[k]=2000+Object.keys(at).length*40);
+   S.intro={t0:performance.now(),at,end:Math.max(...Object.values(at))+700};document.body.classList.add('intro')}
 }
 function pushRecent(id){S.recent=S.recent.filter(x=>x!==id);S.recent.unshift(id);S.recent=S.recent.slice(0,6)}
 function expandDom(id,dom){
@@ -644,7 +659,7 @@ function tileHTML2(id){
   const ft='';
   const glow=COL[n.type];
   const pp=S.pos[id],cc=S.pos[S.center],ringN=pp&&cc?Math.max(Math.abs(pp.i-cc.i),Math.abs(pp.j-cc.j)):0;
-  return `<div class="tl ${n.type} ${sel?'sel':''} ${S.fresh.has(id)?(S.entering?'new':'new quick'):''}" data-id="${id}"><div class="in" style="${S.fresh.has(id)&&S.entering?`animation-delay:${(ringN*.12+(hue(id)%10)*.025).toFixed(2)}s`:''}"><div class="cd ${d.k}${d.ex?' E':''}" style="--glow:${glow}88;--glow2:${glow};width:${d.w}px;height:${d.h}px;padding:${d.py}px ${d.px}px">${cardBody(id)}<i class="gl"></i><i class="rg"></i></div></div>${ft}</div>`;
+  return `<div class="tl ${n.type} ${id===S.center?'ctr':''} ${sel?'sel':''} ${S.fresh.has(id)?(S.entering?'new':'new quick'):''}" data-id="${id}"><div class="in" style="${S.fresh.has(id)&&S.entering?`animation-delay:${(ringN*.04+(hue(id)%10)*.012).toFixed(2)}s`:''}"><div class="cd ${d.k}${d.ex?' E':''}" style="--glow:${glow}88;--glow2:${glow};width:${d.w}px;height:${d.h}px;padding:${d.py}px ${d.px}px">${cardBody(id)}<i class="gl"></i><i class="rg"></i></div></div>${ft}</div>`;
 }
 function render(){
   computeNudge();computeLod();
@@ -707,7 +722,7 @@ function draw(){
     const off=(p.r>2.1||p.x<-300||p.x>W+300||p.y<-260||p.y>H+260);
     if(off){if(el._off!==true){el.style.display='none';el._off=true}return}
     if(el._off!==false){el.style.display='';el._off=false}
-    const tf=`translate(${(p.x-CW/2).toFixed(1)}px,${(p.y-CH/2).toFixed(1)}px) scale(${(p.s*cardM(p.r)*(S.sel===id?1.03:1)).toFixed(3)})`;
+    const tf=`translate(${(p.x-CW/2).toFixed(1)}px,${(p.y-CH/2).toFixed(1)}px) scale(${(p.s*cardM(p.r)*szS(id)*(S.sel===id?1.03:1)).toFixed(3)})`;
     if(el._tf!==tf){el.style.transform=tf;el._tf=tf}
     const zi=Math.round(1000-p.r*500)+(S.sel===id?400:0);
     if(el._zi!==zi){el.style.zIndex=zi;el._zi=zi}
@@ -770,11 +785,12 @@ function drawEdges(){
   gE.clearRect(0,0,W,H);const PO=[];const nowMs=performance.now();const hot=S.hover&&!isMore(S.hover)?S.hover:S.sel;const now=performance.now()/1000;
   edgeList().forEach(([a,b,kind],idx)=>{
     const wa=wpos(a),wb=wpos(b),pa=proj(wa.x,wa.y,depthF(a)),pb=proj(wb.x,wb.y,depthF(b)),da=effDims(a),db=effDims(b);
-    const sa=pa.s*cardM(pa.r)*(S.sel===a?1.03:1),sb=pb.s*cardM(pb.r)*(S.sel===b?1.03:1);
+    const sa=pa.s*cardM(pa.r)*szS(a)*(S.sel===a?1.03:1),sb=pb.s*cardM(pb.r)*szS(b)*(S.sel===b?1.03:1);
     const hwa=da.w/2*sa,hwb=db.w/2*sb,hha=da.h/2*sa,hhb=db.h/2*sb;
     const dx=pb.x-pa.x,dy=pb.y-pa.y;let P,Q,h,sg;
     if(Math.abs(dx)>(hwa+hwb)*.5){sg=dx>0?1:-1;h=true;P={x:pa.x+sg*hwa,y:pa.y};Q={x:pb.x-sg*hwb,y:pb.y}}
     else{sg=dy>0?1:-1;h=false;P={x:pa.x,y:pa.y+sg*hha};Q={x:pb.x,y:pb.y-sg*hhb}}
+    if(S.intro){const t=performance.now()-S.intro.t0;if(t<Math.max(S.intro.at[a]??0,S.intro.at[b]??0)-120)return}
     const on=kind!=='more'&&hot&&(a===hot||b===hot);
     // 카드가 나타나는 속도(0.3초)와 똑같이 선도 함께 나타난다 — 선이 먼저 뻗어 있지 않게
     const bd=S.born[b]===undefined?1:Math.max(0,Math.min(1,(nowMs-S.born[b])/300)),bf=bd*bd*(3-2*bd);
@@ -832,7 +848,8 @@ function frame(){
   const gl=Math.abs(vel.x)>.03||Math.abs(vel.y)>.03;
   if(!dragging&&gl){tgt.x+=vel.x;tgt.y+=vel.y;vel.x*=.93;vel.y*=.93}
   draw();
-  const moving=dragging||gl||nm||hasHot()||(performance.now()-S.lastBorn<420)||Math.abs((S.panel&&!mobile()?176:0)-fsh)>.4||Math.abs(tgt.x-cam.x)>.06||Math.abs(tgt.y-cam.y)>.06||Math.abs(tgt.z-cam.z)>.0006;
+  if(S.intro&&performance.now()-S.intro.t0>S.intro.end){S.intro=null;document.body.classList.remove('intro')}
+  const moving=!!S.intro||dragging||gl||nm||hasHot()||(performance.now()-S.lastBorn<420)||Math.abs((S.panel&&!mobile()?176:0)-fsh)>.4||Math.abs(tgt.x-cam.x)>.06||Math.abs(tgt.y-cam.y)>.06||Math.abs(tgt.z-cam.z)>.0006;
   if(moving)raf=requestAnimationFrame(frame);
 }
 function focusNode(id,force){
