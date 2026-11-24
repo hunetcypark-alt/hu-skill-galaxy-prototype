@@ -99,7 +99,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .cd .rg{position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;opacity:0;transition:opacity .35s;background:linear-gradient(180deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.14) 46%,color-mix(in srgb,var(--glow2,#fff) 88%,transparent) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
 .tl:hover .cd .gl{opacity:.5}.tl:hover .cd .rg{opacity:.65}
 .tl.sel .cd .gl{opacity:1}.tl.sel .cd .rg{opacity:1}
-.cd.R .gl{opacity:.32;--glow2:#cdbdff}.cd.R .rg{opacity:.55;--glow2:#cdbdff}
+.cd.R .gl{opacity:.32;--glow2:#fff}.cd.R .rg{opacity:.55;--glow2:#fff}
 .cd.X .gl,.cd.X .rg{display:none}
 
 .tl.sel .cd{background:linear-gradient(180deg,rgba(92,92,100,.9),rgba(56,56,64,.86));box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 0 1px rgba(255,255,255,.34),0 24px 56px -22px var(--glow,rgba(255,255,255,.4))}
@@ -263,7 +263,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 /* 글래스 느낌 줄이기 — 불투명한 평평한 면 + 얇은 테두리 */
 .cd::before{display:none!important}
 .cd{box-shadow:inset 0 0 0 1px rgba(255,255,255,.085),0 10px 26px rgba(0,0,0,.4)!important}
-.cd.R{background:#2a2a2d!important}.cd.L{background:#252527!important}.cd.M{background:#212123!important}.cd.S{background:#1c1c1e!important}.cd.X{background:#1c1c1e!important}
+.cd.R{background:#46464a!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),0 10px 26px rgba(0,0,0,.4)!important}.cd.R .sb{color:#b9b9bf}.cd.R .mc{background:rgba(255,255,255,.16);color:#ececef}.cd.L{background:#252527!important}.cd.M{background:#212123!important}.cd.S{background:#1c1c1e!important}.cd.X{background:#1c1c1e!important}
 .cd.E{background:#2f2f32!important}
 .cd .pn{background:#18181a!important;box-shadow:none!important}
 .cd .pl{background:#141416!important}
@@ -483,7 +483,7 @@ function wrapInfo(t,fs,wt,maxW){let lines=1,cur='',widest=0;for(const w of t.spl
 const TIER={R:{fs:21,wt:600,px:22,py:20,min:230,max:320},L:{fs:17,wt:600,px:20,py:19,min:190,max:292},M:{fs:14.5,wt:500,px:18,py:17,min:172,max:264},S:{fs:13.5,wt:500,px:18,py:0,min:132,max:232}};
 const DOTW=31,SUBLH=17.5,SUBMT=9,PANEL=120,dimMemo={};
 /* 정보 단계(LOD)에 따라 실제로 보이는 카드 크기 */
-S.lodMap={};S.dist={};S.zoomFull=false;
+S.lodMap={};S.dist={};S.zoomFull=false;S.flat=false;
 /* 정보 단계와 깊이는 '지금 보는 노드로부터 그래프상 몇 칸'으로만 정한다 — 드래그해도 변하지 않는다 */
 function computeLod(){
   S.dist={};const f=S.sel&&S.pos[S.sel]?S.sel:S.center;if(!S.pos[f])return;const fb=baseW(f);
@@ -495,7 +495,7 @@ function lodOf(id){
   const k=innerWidth<=760?.7:1;return d<=2.6*k?0:d<=3.6*k?1:d<=4.6*k?2:3;
 }
 const depthF=id=>{const d=S.dist[id];return d===undefined?0:.13-Math.min(d,4)/4*.26};   // 가까운 카드는 조금 빨리, 먼 카드는 조금 느리게(시차)
-const distOp=id=>{const d=S.dist[id];if(d===undefined)return 1;return d<=2.6?1:d<=3.6?.86:d<=4.6?.68:.5};
+const distOp=id=>{if(S.flat)return 1;const d=S.dist[id];if(d===undefined)return 1;return d<=2.6?1:d<=3.6?.86:d<=4.6?.68:.5};
 function effDims(id){
   const d=dimOf(id),l=S.lodMap[id]||0;
   if(!l||d.ex||d.k==='X')return d;
@@ -506,7 +506,7 @@ function dimOf(id){
   if(isMore(id))return{k:'X',w:176,h:46};
   const n=N[id],root=id===S.center,ex=S.sel===id;
   let k;
-  if(root)k='R';else{const f=sizeF(id),p=S.pos[id],c=S.pos[S.center];const ring=p&&c?Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j)):1;k=ring<=2?(f>.45?'L':'M'):ring===3?(f>.5?'M':'S'):'S'}
+  if(root)k='R';else{const f=sizeF(id),p=S.pos[id],c=S.pos[S.center];const ring=p&&c?Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j)):1;k=ring<=2?(f>.45?'L':'M'):ring===3?(f>.5?'M':'S'):'S';if(S.flat&&k==='S')k='M'}
   const key=id+'|'+k+'|'+(ex?1:0)+'|'+(S.login?1:0);if(dimMemo[key])return dimMemo[key];
   const T0=TIER[k],py=ex&&k==='S'?18:T0.py,px=T0.px,sub=subOf(n);
   let w,h,th=54;
@@ -687,7 +687,10 @@ const cardM=r=>1+DK*(.6+.45*Math.exp(-r*r/.6)-1);
 let _zp='';
 function draw(){
   DK=depthK();A=DK*1.0;
-  if(cam.z>1.3)S.zoomFull=true;else if(cam.z<1.15)S.zoomFull=false;
+  // 축소해서 평면에 가까워지면(또는 전체 보기) 멀리 있는 카드도 내용을 전부 보여준다 — 죽은 우주처럼 보이지 않게
+  {const was=S.flat;if(cam.z<.8)S.flat=true;else if(cam.z>.92)S.flat=false;
+   if(was!==S.flat){S.zoomFull=S.flat||cam.z>1.3;Object.keys(dimMemo).forEach(k=>delete dimMemo[k]);render();return}}
+  if(!S.flat){if(cam.z>1.3)S.zoomFull=true;else if(cam.z<1.15)S.zoomFull=false}
   // 타일 — 2D 이동·확대만 쓰고, 값이 바뀔 때만 DOM 에 쓴다(흐림·3D 회전 없음)
   document.querySelectorAll('.tl').forEach(el=>{
     const id=el.dataset.id,p0=S.pos[id];if(!p0)return;
