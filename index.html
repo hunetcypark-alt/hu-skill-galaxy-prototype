@@ -612,7 +612,7 @@ function wrapInfo(t,fs,wt,maxW){let lines=1,cur='',widest=0;for(const w of t.spl
 const TIER={R:{fs:21,wt:600,px:22,py:20,min:230,max:320},L:{fs:17,wt:600,px:20,py:19,min:190,max:292},M:{fs:14.5,wt:500,px:18,py:17,min:172,max:264},S:{fs:13.5,wt:500,px:18,py:0,min:132,max:232}};
 const DOTW=31,SUBLH=17.5,SUBMT=9,PANEL=120,dimMemo={};
 /* 정보 단계(LOD)에 따라 실제로 보이는 카드 크기 */
-S.lodMap={};S.dist={};S.zoomFull=false;S.flat=false;S.hl=null;S.hlOwner=null;S.ux={};S.path=[];S.spot=null;S.view='card';try{if(localStorage.getItem('hg_view')==='node')S.view='node'}catch(e){}
+S.lodMap={};S.dist={};S.zoomFull=false;S.flat=false;S.hl=null;S.hlOwner=null;S.ux={};S.path=[];S.spot=null;S.showAll=true;S.fitZ=null;S.view='card';try{if(localStorage.getItem('hg_view')==='node')S.view='node'}catch(e){}
 /* 정보 단계와 깊이는 '지금 보는 노드로부터 그래프상 몇 칸'으로만 정한다 — 드래그해도 변하지 않는다 */
 /* 선택한 카드와 선(별자리)으로 이어진 노드 집합 — 항상 전부 또렷하게 보인다 */
 function computeConn(){
@@ -632,14 +632,14 @@ function computeLod(){
 function lodOf(id){
   if(S.intro&&performance.now()-S.intro.t0<(S.intro.at[id]??0))return 3;
   if(S.view==='node')return id===S.sel?0:3;   // 노드형: 선택한 카드만 카드로 열리고 나머지는 노드(아이콘+이름)
-  if(id===(S.sel||S.center)||S.zoomFull)return 0;
+  if(id===(S.sel||S.center)||S.zoomFull||S.showAll)return 0;   // 첫 진입·전체 보기에서는 카드를 전부 보여준다
   if(S.conn&&S.conn.has(id))return 0;   // 선으로 이어진 노드는 100% 활성
   if(S.spot&&(id===S.spot.owner||S.spot.ids.has(id)))return 0;
   const d=S.dist[id];if(d===undefined)return 0;
   const k=innerWidth<=760?.7:1;const prev=S.lodMap[id];return prev===0?(d<=2.7*k?0:3):(d<=2.0*k?0:3);   // 가까우면 전체, 멀면 아이콘만(경계에서는 직전 상태 유지)
 }
 const depthF=id=>{const d=S.dist[id];return d===undefined?0:.13-Math.min(d,4)/4*.26};   // 가까운 카드는 조금 빨리, 먼 카드는 조금 느리게(시차)
-const distOp=id=>{if(S.flat)return 1;const d=S.dist[id];if(d===undefined)return 1;return d<=2.6?1:d<=3.6?.93:d<=4.6?.84:.74};
+const distOp=id=>{if(S.flat||S.showAll)return 1;const d=S.dist[id];if(d===undefined)return 1;return d<=2.6?1:d<=3.6?.93:d<=4.6?.84:.74};
 function effDims(id){
   const d=dimOf(id),l=S.lodMap[id]||0;
   if(!l||d.ex||d.k==='X')return d;
@@ -651,7 +651,7 @@ function dimOf(id){
   if(S.view==='node'&&S.sel===id)return{k:'P',ex:1,w:200,h:250,th:250,px:0,py:0};   // 노드형: 선택한 노드는 카드가 아니라 곰발바닥(원 + 위쪽 버튼 3개)
   const n=N[id],root=id===S.center,ex=S.sel===id;
   let k;
-  if(root)k=(S.sel&&S.sel!==id)?'L':'R';else if(ex)k='R';else{const f=sizeF(id),p=S.pos[id],c=S.pos[S.center];const ring=p&&c?Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j)):1;k=ring<=2?(f>.45?'L':'M'):ring===3?(f>.5?'M':'S'):'S';if(S.flat&&k==='S')k='M'}
+  if(root)k=(S.sel&&S.sel!==id)?'L':'R';else if(ex)k='R';else{const f=sizeF(id),p=S.pos[id],c=S.pos[S.center];const ring=p&&c?Math.max(Math.abs(p.i-c.i),Math.abs(p.j-c.j)):1;k=ring<=2?(f>.45?'L':'M'):ring===3?(f>.5?'M':'S'):'S';if((S.flat||S.showAll)&&k==='S')k='M'}
   const key=id+'|'+k+'|'+(ex?1:0)+'|'+(S.login?1:0);if(dimMemo[key])return dimMemo[key];
   const T0=TIER[k],py=ex&&k==='S'?18:T0.py,px=T0.px,sub=subOf(n);
   let w,h,th=54;
@@ -760,7 +760,7 @@ function showMore(mid){
   setSpot(m.pid,res.added);flashIds(res.added);(S.ux[m.pid]=S.ux[m.pid]||new Set());res.added.forEach(x=>S.ux[m.pid].add(x));S.hl=new Set(res.added);S.hlOwner=m.pid;banner(`${T[m.dom]} ${res.added.length}개를 더 펼쳤어요`);render();focusGroup([m.pid,...S.exp[m.pid][m.dom]]);
 }
 function build(id){
-  S.center=id;S.entering=true;S.born={};S.pos={};S.cells={};S.off={};S.nt={};S.nc={};S.parent={};S.exp={};S.more={};S.fresh=new Set();S.hl=null;S.spot=null;S.ux={};S.path=[id];S.recent=[];S.sel=null;S.panel=false;
+  S.center=id;S.entering=true;S.born={};S.pos={};S.cells={};S.off={};S.nt={};S.nc={};S.parent={};S.exp={};S.more={};S.fresh=new Set();S.hl=null;S.spot=null;S.showAll=true;S.fitZ=null;S.ux={};S.path=[id];S.recent=[];S.sel=null;S.panel=false;
   placeAt(id,0,0);['skill','content','career'].forEach(d=>fillAround(id,d,WEDGE[d]));
   cam.x=tgt.x=0;cam.y=tgt.y=0;cam.z=tgt.z=.9;vel.x=vel.y=0;
   /* 입장 연출: 모든 노드가 아이콘(별)으로 먼저 떠 있다가, 중심부터 바깥으로 차례로 카드로 펼쳐진다 */
@@ -899,6 +899,7 @@ const cardM=r=>1+DK*(.78+.27*Math.exp(-r*r/.6)-1);
 let _zp='';
 function draw(){
   DK=depthK();A=DK*1.0;
+  if(S.showAll&&S.fitZ&&Math.abs(tgt.z-S.fitZ)>S.fitZ*.08){S.showAll=false;render();return}
   // 축소해서 평면에 가까워지면(또는 전체 보기) 멀리 있는 카드도 내용을 전부 보여준다 — 죽은 우주처럼 보이지 않게
   {const was=S.flat;if(cam.z<.6)S.flat=true;else if(cam.z>.7)S.flat=false;
    if(was!==S.flat){S.zoomFull=S.flat;Object.keys(dimMemo).forEach(k=>delete dimMemo[k]);render();return}}
@@ -917,7 +918,7 @@ function draw(){
     if(el._zi!==zi){el.style.zIndex=zi;el._zi=zi}
     const inn=el.firstElementChild;
     const focus=(S.sel===id||S.hover===id);
-    const dkf=1-DK*Math.min(.38,p.r*.75);
+    const dkf=S.showAll?1:1-DK*Math.min(.38,p.r*.75);
     if(S.hl&&S.hlOwner!==S.sel)S.hl=null;
     if(el.ownerDocument.body._spot!==!!S.spot){document.body.classList.toggle('spot',!!S.spot);document.body._spot=!!S.spot}
     const inHl=!!(S.hl&&S.hl.has(id)),isOwn=!!(S.hl&&id===S.hlOwner);
@@ -1140,9 +1141,9 @@ function fit(anim){
   const ids=Object.keys(S.pos).filter(visible);if(!ids.length)return;
   let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;ids.forEach(i=>{const w=wpos(i);x0=Math.min(x0,w.x);x1=Math.max(x1,w.x);y0=Math.min(y0,w.y);y1=Math.max(y1,w.y)});
   const spanX=(x1-x0+CW)*NSV(),spanY=(y1-y0+CH)*NSV();
-  if(innerWidth<=760){const c=S.pos[S.center]?wpos(S.center):{x:(x0+x1)/2,y:(y0+y1)/2};tgt.z=.62;vel.x=vel.y=0;tgt.x=c.x;tgt.y=c.y;kick();return}   // 모바일: 전체를 욱여넣지 않고 중심 주변을 읽을 수 있는 크기로
+  if(innerWidth<=760){const c=S.pos[S.center]?wpos(S.center):{x:(x0+x1)/2,y:(y0+y1)/2};tgt.z=.62;vel.x=vel.y=0;tgt.x=c.x;tgt.y=c.y;S.fitZ=tgt.z;if(!S.showAll){S.showAll=true;render()}kick();return}   // 모바일: 전체를 욱여넣지 않고 중심 주변을 읽을 수 있는 크기로
   tgt.z=Math.max(.3,Math.min(1.2,Math.min((W-120)/spanX,(H-190)/spanY)));vel.x=vel.y=0;
-  tgt.x=(x0+x1)/2;tgt.y=(y0+y1)/2;kick();
+  tgt.x=(x0+x1)/2;tgt.y=(y0+y1)/2;S.fitZ=tgt.z;if(!S.showAll){S.showAll=true;render()}kick();
 }
 const stage=$('#stage');
 const stageBox=()=>stage.getBoundingClientRect();
@@ -1191,7 +1192,7 @@ if(window.ResizeObserver)new ResizeObserver(()=>resize()).observe(document.getEl
 const mobile=()=>innerWidth<=760;
 const fmt=v=>Number.isInteger(+v.toFixed(1))?String(Math.round(v)):v.toFixed(1);
 function select(id){
-  const was=S.panel;S.sel=id;S.panel=true;if(S.spot&&S.spot.owner!==id&&!S.spot.ids.has(id))S.spot=null;pushPath(id);
+  const was=S.panel;S.sel=id;S.panel=true;if(S.spot&&S.spot.owner!==id&&!S.spot.ids.has(id))S.spot=null;S.showAll=false;pushPath(id);
   render();openPanel();
   focusNode(id,true);
 }
