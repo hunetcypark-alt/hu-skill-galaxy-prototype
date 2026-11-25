@@ -77,9 +77,9 @@ body.spot .tl:not(.ux):not(.sel):not(.pc):hover .cd .gl,body.spot .tl:not(.ux):n
 body.vnode .tl[data-lod="3"] .bgs{display:block}
 /* 노드형: 카드 대신 도형 아이콘 노드 + 이름 라벨. 선택한 카드만 카드로 열린다 */
 body.vnode .tl[data-lod="3"] .cd{background:transparent!important;box-shadow:none!important;overflow:visible}
-body.vnode .tl[data-lod="3"] .cd .ic{width:34px;height:34px}
-body.vnode .tl[data-lod="3"] .cd .ic svg{width:34px;height:34px;filter:drop-shadow(0 0 8px rgba(255,255,255,.22))}
-body.vnode .tl[data-lod="3"] .nl{display:block;position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:3px;font-size:11.5px;font-weight:500;color:#cfcfd6;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis;pointer-events:none;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+body.vnode .tl[data-lod="3"] .cd .ic{width:38px;height:38px}
+body.vnode .tl[data-lod="3"] .cd .ic svg{width:38px;height:38px;filter:drop-shadow(0 0 8px rgba(255,255,255,.22))}
+body.vnode .tl[data-lod="3"] .nl{display:block;position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:5px;padding:3px 9px 4px;border-radius:8px;background:rgba(8,8,10,.86);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07);font-size:11.5px;font-weight:500;color:#dcdce2;white-space:nowrap;max-width:172px;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 body.vnode .tl[data-lod="3"]:hover .cd,body.vnode .tl.ux[data-lod="3"] .cd,body.vnode .tl.pc[data-lod="3"] .cd{box-shadow:none!important}
 body.vnode .tl.ux[data-lod="3"] .cd .ic svg,body.vnode .tl.pc[data-lod="3"] .cd .ic svg{filter:drop-shadow(0 0 10px rgba(255,255,255,.7))}
 body.vnode .tl.pc[data-lod="3"] .cd .ic svg{filter:drop-shadow(0 0 10px rgba(255,233,168,.8))}
@@ -89,9 +89,8 @@ body.vnode .tl.pc[data-lod="3"] .cd .ic svg{filter:drop-shadow(0 0 10px rgba(255
 .tl.sel .cd.P,.tl.sel .cd.P.E,.cd.P.E,.tl.ux .cd.P,.tl.pc .cd.P{background:transparent!important;box-shadow:none!important}
 .cd.P .gl,.cd.P .rg{display:none!important}
 .pw-ring2{position:absolute;left:50%;top:112px;width:132px;height:132px;margin:-66px 0 0 -66px;border-radius:50%;box-shadow:0 0 0 1px rgba(255,255,255,.12);pointer-events:none}
-.pw-core{position:absolute;left:50%;top:112px;width:100px;height:100px;margin:-50px 0 0 -50px;border-radius:50%;background:#2c2c30;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 16px 34px -14px var(--glow,rgba(255,255,255,.4));overflow:hidden;display:grid;place-items:center}
-.pw-gl{position:absolute;inset:0;border-radius:50%;pointer-events:none;background:radial-gradient(120% 70% at 50% 118%,color-mix(in srgb,var(--glow2) 45%,transparent),transparent 62%)}
-.pw-ico{position:relative;width:46px;height:46px;display:block;z-index:1}.pw-ico svg{width:46px;height:46px;display:block}
+.pw-core{position:absolute;left:50%;top:112px;width:112px;height:112px;margin:-56px 0 0 -56px;display:block;filter:drop-shadow(0 14px 22px rgba(0,0,0,.45))}
+.pw-svg{width:100%;height:100%;display:block;overflow:visible}
 .pw-btn{position:absolute;left:50%;top:112px;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:#1f1f22;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);display:grid;place-items:center;transform:translate(var(--x),var(--y));transition:background .15s}
 .pw-btn:hover{background:#2a2a2e}
 .pw-btn svg{width:16px;height:16px}
@@ -101,7 +100,7 @@ body.vnode .tl.pc[data-lod="3"] .cd .ic svg{filter:drop-shadow(0 0 10px rgba(255
 .pw-name b{font-size:14.5px;font-weight:600;color:#f1f1f3}
 .pw-name small{font-size:11px;color:#8c8c92}
 body.vnode .tl.ctr[data-lod="3"] .cd .ic svg{filter:drop-shadow(0 0 16px rgba(255,255,255,.6)) brightness(1.35)}
-body.vnode .tl.ctr[data-lod="3"] .nl{font-size:14px;font-weight:700;color:#fff}
+body.vnode .tl.ctr[data-lod="3"] .nl{font-size:14px;font-weight:700;color:#fff;padding:5px 12px 6px;border-radius:10px;background:rgba(8,8,10,.92)}
 .tl.flash .cd::before{display:block!important;content:'';position:absolute;inset:-3px;border-radius:inherit;pointer-events:none;animation:flr .65s ease-out 1}
 @keyframes flr{0%{box-shadow:0 0 0 0 rgba(255,255,255,.75),0 0 0 0 rgba(255,255,255,.5);opacity:1}70%{box-shadow:0 0 0 14px rgba(255,255,255,0),0 0 46px 10px rgba(255,255,255,.28);opacity:1}100%{box-shadow:0 0 0 18px rgba(255,255,255,0),0 0 50px 12px rgba(255,255,255,0);opacity:0}}
 .tl.ux .cd{box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),0 12px 26px -16px rgba(255,255,255,.4)!important;background:#2e2e32!important}
@@ -154,6 +153,7 @@ body.vnode .tl.ctr[data-lod="3"] .nl{font-size:14px;font-weight:700;color:#fff}
 .tl[data-lod="3"] .t,.tl[data-lod="3"] .sb,.tl[data-lod="3"] .mc{opacity:0;transition:opacity .14s ease 0s;pointer-events:none}   /* 숨길 때도 display:none으로 툭 사라지지 않고 빠르게 흐려진다 */
 .tl[data-lod="3"] .cd{padding:0 0 0 15px!important;justify-content:center}   /* 아이콘 자리를 카드 상태와 거의 같게 둬서 펼칠 때 아이콘이 튀지 않는다 */
 body.vnode .tl[data-lod="3"] .cd{padding:0!important}
+body.vnode .tl[data-lod="3"] .t,body.vnode .tl[data-lod="3"] .sb,body.vnode .tl[data-lod="3"] .mc,body.vnode .tl[data-lod="3"] .cd .gl,body.vnode .tl[data-lod="3"] .cd .rg{display:none!important}
 body.vnode .tl[data-lod="3"] .cd .hd{justify-content:center;width:100%}
 .tl.dim .in{opacity:.2!important}
 /* 더보기: 다른 노드에 호버할 때도 죽어 보이지 않게, 눌러볼 수 있는 자리임을 알려준다 */
@@ -680,6 +680,23 @@ function jitter(ids){
     if(!moved)break}
   ids.forEach(id=>{const o=S.off[id];o.x=Math.max(-160,Math.min(160,o.x));o.y=Math.max(-115,Math.min(115,o.y))});
 }
+/* 펼친 뒤 카드끼리 겹쳐 쌓이지 않게, 화면에 있는 모든 노드를 서로 밀어 간격을 맞춘다(가운데 노드는 고정) */
+function relaxAll(){
+  const ids=Object.keys(S.pos).filter(i=>!isMore(i)&&N[i]);
+  ids.forEach(i=>{S.off[i]=S.off[i]||{x:0,y:0}});
+  const dm=i=>S.view==='node'?{w:Math.min(170,Math.max(70,N[i].name.length*7.5))*szB(i),h:70*szB(i)}:(()=>{const d=dimOf(i),s=szB(i);return {w:d.w*s,h:d.h*s}})();
+  const D={};ids.forEach(i=>{D[i]=dm(i)});
+  const gx=S.view==='node'?30:46,gy=S.view==='node'?26:40;
+  for(let it=0;it<90;it++){let moved=false;
+    for(let a=0;a<ids.length;a++)for(let b=a+1;b<ids.length;b++){
+      const A=ids[a],B=ids[b],wa=baseW(A),wb=baseW(B);
+      const ox=(D[A].w+D[B].w)/2+gx-Math.abs(wa.x-wb.x),oy=(D[A].h+D[B].h)/2+gy-Math.abs(wa.y-wb.y);
+      if(ox>0&&oy>0){moved=true;const fa=A===S.center?0:(B===S.center?1:.5),fb=B===S.center?0:(A===S.center?1:.5);
+        if(oy<ox){const s=wa.y>=wb.y?1:-1;S.off[A].y+=s*oy*fa;S.off[B].y-=s*oy*fb}
+        else{const s=wa.x>=wb.x?1:-1;S.off[A].x+=s*ox*fa;S.off[B].x-=s*ox*fb}}}
+    if(!moved)break}
+  ids.forEach(i=>{const o=S.off[i];o.x=Math.max(-330,Math.min(330,o.x));o.y=Math.max(-250,Math.min(250,o.y))});
+}
 /* 정책(11/25 회의): 연관도 0.8 이상 · 높은 순 · 최대 10개를 먼저 펼치고, 더 보고 싶으면 더보기로 10개씩.
    샘플 데이터의 점수가 낮게 깔려 있어 SC 로 보정해 같은 기준(0.8)으로 자른다 */
 const REL_MIN=.8,PAGE=10,SC=x=>Math.min(1,x*1.5);
@@ -716,7 +733,7 @@ function fillAround(id,dom,centerAngle,limit=PAGE,moreMode=false){
   const pool=near.length>=newIds.length+1?near:cand;
   const take=newIds.slice(0,Math.min(limit,pool.length));
   pool.slice(0,take.length).forEach((c,k)=>{placeAt(take[k],c.i,c.j);S.parent[take[k]]=id;S.fresh.add(take[k])});
-  jitter(take);
+  jitter(take);relaxAll();
   S.exp[id]=S.exp[id]||{};S.exp[id][dom]=take.slice();
   const rest=full.filter(x=>!S.pos[x[0]]&&!take.includes(x[0])).length;
   const farPool=(near.length>take.length?near:cand).slice(take.length).filter(c=>!S.cells[ck(c.i,c.j)]);
@@ -777,12 +794,18 @@ const dot=t=>`<i style="background:${COL[t]}"></i>`;
 const row=(label,val,t)=>`<div class="rw"><span>${label}</span><b>${val}</b>${dot(t)}</div>`;
 function subOf(n){return n.type==='skill'?`스킬 보유자 ${n.cnt.toLocaleString()}명`:n.type==='career'?`커리어 보유자 ${n.cnt.toLocaleString()}명`:(n.prod==='multi'?'2개 과정에 들어 있어요':n.ct||'콘텐츠')}
 /* 노드형 선택 모양 — 큰 원 노드 + 이름표, 위쪽 호에 스킬·콘텐츠·커리어 펼치기 버튼(곰발바닥) */
+/* 선택 노드 본체: 원 안에 도형 배지를 또 넣지 않고, 도메인 도형(원·둥근 사각·육각) 자체가 본체가 된다 */
+function pawShape(t){
+  const c=COL[t],hex=[0,1,2,3,4,5].map(i=>{const a=(60*i-90)*Math.PI/180;return (Math.cos(a)*11.4).toFixed(2)+','+(Math.sin(a)*11.4).toFixed(2)}).join(' ');
+  const mk=(fill,stroke)=>t==='skill'?`<circle r="11" ${fill} ${stroke}/>`:t==='content'?`<rect x="-10.2" y="-10.2" width="20.4" height="20.4" rx="5.4" ${fill} ${stroke}/>`:`<polygon points="${hex}" ${fill} ${stroke} stroke-linejoin="round"/>`;
+  return `<svg class="pw-svg" viewBox="-12 -12 24 24"><defs><radialGradient id="pwg-${t}" cx=".5" cy="1.05" r=".75"><stop offset="0" stop-color="${c}" stop-opacity=".42"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient></defs>${mk('fill="#2a2a2e"','stroke="rgba(255,255,255,.22)" stroke-width=".5"')}${mk(`fill="url(#pwg-${t})"`,'stroke="none"')}${mk('fill="none"',`stroke="${c}" stroke-opacity=".65" stroke-width=".7"`)}<g transform="scale(.62) translate(-12,-12)" style="color:${c}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICO[t]}</g></svg>`;
+}
 function pawHTML(id){
   const n=N[id];
   const btns=['skill','content','career'].map((dm,k)=>{const a=[-56,0,56][k]*Math.PI/180,R=86,x=(Math.sin(a)*R).toFixed(1),y=(-Math.cos(a)*R).toFixed(1);
     const on=S.exp[id]&&S.exp[id][dm],cnt=relTo(id,dm).length;
     return `<button class="pw-btn${on?' on':''}" data-fan="${dm}" title="${T[dm]} ${cnt}개 ${on?'접기':'펼치기'}" style="--x:${x}px;--y:${y}px;--dc:${COL[dm]};color:${COL[dm]}"><svg viewBox="0 0 24 24" fill="none" stroke="${COL[dm]}" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${ICO[dm]}</svg><em>${cnt}</em></button>`}).join('');
-  return `<i class="pw-ring2"></i><span class="pw-core"><span class="pw-ico">${badgeIco(n.type)}</span><i class="pw-gl"></i></span>${btns}<span class="pw-name"><b>${esc(n.name)}</b><small>${T[n.type]}</small></span>`;
+  return `<i class="pw-ring2"></i><span class="pw-core">${pawShape(n.type)}</span>${btns}<span class="pw-name"><b>${esc(n.name)}</b><small>${T[n.type]}</small></span>`;
 }
 function cardBody(id){
   if(S.view==='node'&&S.sel===id)return pawHTML(id);
@@ -857,7 +880,7 @@ function burst(){}
 let A=0,DK=0; // A: 곡면 정도, DK: 깊이감(0=평면 · 1=구면) — 줌에 따라 달라짐
 const depthK=(z)=>{const t=Math.max(0,Math.min(1,((z===undefined?cam.z:z)-.55)/.25));return t*t*(3-2*t)};   // 55%에서 시작해 80%에 완전한 구면·계층 모습
 let fsh=0; // 초점 중심이 패널을 피해 왼쪽으로 옮겨간 정도(px)
-const NSV=()=>S.view==='node'?.75:1;   // 노드형은 카드가 없어 간격을 조금 좁힌다
+const NSV=()=>S.view==='node'?.66:1;   // 노드형은 카드가 없어 간격을 조금 좁힌다
 function proj(wx,wy,pf){
   const k=(1+(pf||0))*NSV();const dx=(wx-cam.x)*cam.z*k,dy=(wy-cam.y)*cam.z*k;const R=Math.hypot(W,H)*.52;
   const r=Math.hypot(dx,dy)/R;const s=1/(1+A*r*r);
