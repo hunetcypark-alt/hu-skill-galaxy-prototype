@@ -30,6 +30,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .cd.X span{color:#fff;font-weight:700}
 .cd.X{flex-direction:row!important;flex-wrap:nowrap!important;white-space:nowrap;padding:0 18px!important}.cd.X em{font-style:normal;display:block}.cd.X::before{display:none}
 .cd.X i{width:8px;height:8px;border-radius:50%;flex:none}
+
 .intro .cd{transition:width .4s cubic-bezier(.16,1,.3,1),height .4s cubic-bezier(.16,1,.3,1),transform .22s ease,background .22s,box-shadow .22s!important}
 body.intro .cd{overflow:hidden}
 body.intro .tl:not(.ctr) .cd .t,body.intro .tl:not(.ctr) .cd .sb,body.intro .tl:not(.ctr) .cd .mc{white-space:nowrap;animation:txin .3s ease .16s both}
@@ -175,6 +176,7 @@ body.vnode .tl[data-lod="3"] .cd .hd{justify-content:center;width:100%}
 .cd .rw{display:flex;justify-content:flex-end;align-items:center;gap:9px;width:100%;height:32px;padding:0 8px;border-radius:9px;font-size:13px;color:#a2a2a8;text-align:right;transition:background .15s,color .15s}
 .cd .rw>span{margin-right:auto}
 .cd .rw b{color:#e8e8ea;font-weight:600;font-variant-numeric:tabular-nums}
+.cd .rw b small{font-size:.72em;font-weight:500;color:#8d8d94;margin-left:1px}
 .cd .rw i{width:9px;height:9px;border-radius:50%;flex:none;transition:box-shadow .2s}
 .cd .rw:hover{background:rgba(255,255,255,.07);color:#fff}
 .cd .rw.on{color:#fff}
@@ -591,7 +593,8 @@ const CK=()=>S.view==='node'?1:1.1;   // 카드형은 카드를 조금 키운다
 const szB=id=>{if(isMore(id))return 1;if(id===S.center)return S.view==='node'?1.6:1.16*CK();return (.8+.4*Math.pow(Math.max(0,Math.min(1,sizeF(id))),.85))*CK()};   // 선택과 무관한 기본 크기 배율(배치 간격 계산용)
 const szS=id=>{if(isMore(id))return 1;if(id===S.sel)return 1.06*(S.view==='node'?1:CK());if(id===S.center)return S.view==='node'?(S.sel?1.5:1.8):(S.sel?1.0:1.12)*CK();const f=Math.max(0,Math.min(1,sizeF(id)));return (.8+.4*Math.pow(f,.85))*CK()};   // 노드형은 가운데(마이커리어) 노드를 가장 크게
 const visible=id=>isMore(id)?!!S.legend[S.more[id].dom]:(id===S.center||S.legend[N[id].type]);
-const baseW=id=>{const o=S.off[id];return {x:S.pos[id].i*CW+(o?o.x:0),y:S.pos[id].j*CH+(o?o.y:0)}};
+const GW=CW*1.24,GH=CH*1.2,SNAP=true;   // 카드는 배경 점(격자 교차점)의 정중앙에 놓는다
+const baseW=id=>{const o=SNAP?null:S.off[id];return {x:S.pos[id].i*GW+(o?o.x:0),y:S.pos[id].j*GH+(o?o.y:0)}};
 const wpos=id=>{const b=baseW(id),n=S.nc&&S.nc[id];return n?{x:b.x+n.x,y:b.y+n.y}:b};
 /* 선택한 카드가 커지면 겹치는 이웃 카드는 부드럽게 비켜난다 */
 function computeNudge(){
@@ -708,6 +711,9 @@ function relaxAll(){
 /* 정책(11/25 회의): 연관도 0.8 이상 · 높은 순 · 최대 10개를 먼저 펼치고, 더 보고 싶으면 더보기로 10개씩.
    샘플 데이터의 점수가 낮게 깔려 있어 SC 로 보정해 같은 기준(0.8)으로 자른다 */
 const REL_MIN=.8,PAGE=10,SC=x=>Math.min(1,x*1.5);
+/* 카드의 숫자 = 처음 펼쳤을 때 실제로 나오는 개수(연관도 0.8 이상, 최대 10개). 나머지는 더보기로 10개씩 */
+function initCnt(id,dom){const f=relTo(id,dom),s=f.filter(x=>SC(x[1])>=REL_MIN);return Math.min(PAGE,s.length||f.length)}
+function cntTxt(id,dom){return `${initCnt(id,dom)}`}
 function fillAround(id,dom,centerAngle,limit=PAGE,moreMode=false){
   const o=S.pos[id];
   const full=relTo(id,dom);
@@ -811,7 +817,7 @@ function pawShape(t){
 function pawHTML(id){
   const n=N[id];
   const btns=['skill','content','career'].map((dm,k)=>{const a=[-56,0,56][k]*Math.PI/180,R=86,x=(Math.sin(a)*R).toFixed(1),y=(-Math.cos(a)*R).toFixed(1);
-    const on=S.exp[id]&&S.exp[id][dm],cnt=relTo(id,dm).length;
+    const on=S.exp[id]&&S.exp[id][dm],cnt=initCnt(id,dm);
     return `<button class="pw-btn${on?' on':''}" data-fan="${dm}" title="${T[dm]} ${cnt}개 ${on?'접기':'펼치기'}" style="--x:${x}px;--y:${y}px;--dc:${COL[dm]};color:${COL[dm]}"><svg viewBox="0 0 24 24" fill="none" stroke="${COL[dm]}" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">${ICO[dm]}</svg><em>${cnt}</em></button>`}).join('');
   return `<i class="pw-ring2"></i><span class="pw-core">${pawShape(n.type)}</span>${btns}<span class="pw-name"><b>${esc(n.name)}</b><small>${T[n.type]}</small></span>`;
 }
@@ -820,7 +826,7 @@ function cardBody(id){
   const n=N[id],d=dimOf(id);
   const head=`<div class="hd"><span class="ic">${badgeIco(n.type)}</span><span class="t">${esc(n.name)}</span></div><span class="nl">${esc(n.name)}</span>`;
   if(d.ex){
-    const rows=['skill','content','career'].map(dm=>{const on=S.exp[id]&&S.exp[id][dm];const cnt=relTo(id,dm).length;
+    const rows=['skill','content','career'].map(dm=>{const on=S.exp[id]&&S.exp[id][dm];const cnt=cntTxt(id,dm);
       return `<button class="rw ${on?'on':''}" data-fan="${dm}" style="--dc:${COL[dm]}"><span>${T[dm]}</span>${on?'<em class="st">펼침</em>':''}<b>${cnt}</b><i style="background:${COL[dm]}"></i></button>`}).join('');
     return head+`<div class="sb">${subOf(n)}</div><div class="pn">${rows}</div>`;
   }
@@ -828,7 +834,7 @@ function cardBody(id){
   return head+`<div class="sb">${subOf(n)}</div>`+(d.k==='R'&&S.login&&id===ME.myCareer?'<span class="mc">마이커리어</span>':'');
 }
 function tileHTML2(id){
-  if(isMore(id)){const m=S.more[id];return `<div class="tl X ${S.fresh.has(id)?'new':''}" data-id="${id}"><div class="in"><div class="cd X"><i style="background:${COL[m.dom]}"></i><em>${T[m.dom]} <span>${m.count}개</span> 더보기</em></div></div></div>`}
+  if(isMore(id)){const m=S.more[id];return `<div class="tl X ${S.fresh.has(id)?'new':''}" data-id="${id}"><div class="in"><div class="cd X"><i style="background:${COL[m.dom]}"></i><em>${T[m.dom]} <span>+${Math.min(PAGE,m.count)}</span> 더보기</em></div></div></div>`}
   const n=N[id],root=id===S.center,sel=S.sel===id;
   // 카드를 다시 그릴 때 처음부터 현재 단계(lod)의 크기·모양으로 만든다 — 안 그러면 카드 크기로 잠깐 나타났다 줄어들며 사각형 잔상이 번쩍인다
   const lod=lodOf(id);S.lodMap[id]=lod;const d=dimOf(id),ed=effDims(id);
@@ -897,6 +903,8 @@ function proj(wx,wy,pf){
 /* 초점에서 멀수록 작게 — 위계 */
 const cardM=r=>1+DK*(.78+.27*Math.exp(-r*r/.6)-1);
 let _zp='';
+/* 겹침 순서는 카메라 거리가 아니라 계층 순서: 마이커리어(가운데) → 1단계 → 2단계 … 선택해도 이 순서를 지킨다 */
+function treeLv(id){let n=0,x=id;if(isMore(id))x=S.more[id].pid,n=1;while(x&&x!==S.center&&S.parent[x]&&n<12){x=S.parent[x];n++}return n}
 function draw(){
   DK=depthK();A=DK*1.0;
   if(S.showAll&&S.fitZ&&Math.abs(tgt.z-S.fitZ)>S.fitZ*.08){S.showAll=false;render();return}
@@ -914,7 +922,7 @@ function draw(){
     if(el._off!==false){el.style.display='';el._off=false}
     const fo=floatOff(id);const tf=`translate(${(p.x-CW/2+fo.x).toFixed(1)}px,${(p.y-CH/2+fo.y).toFixed(1)}px) scale(${(p.s*cardM(p.r)*szS(id)*(S.sel===id?1.03:1)).toFixed(3)})`;
     if(el._tf!==tf){el.style.transform=tf;el._tf=tf}
-    const zi=Math.round(1000-p.r*500)+(S.sel===id?400:0)+(S.intro&&id===S.center?3000:0);   // 펼쳐지는 동안 마이커리어 카드가 맨 위
+    const zi=2000-treeLv(id)*260-Math.round(Math.min(p.r,2)*100)+(S.sel===id?24:0)+(S.intro&&id===S.center?3000:0);   // 펼쳐지는 동안 마이커리어 카드가 맨 위
     if(el._zi!==zi){el.style.zIndex=zi;el._zi=zi}
     const inn=el.firstElementChild;
     const focus=(S.sel===id||S.hover===id);
@@ -941,14 +949,15 @@ function draw(){
       if(cdEl&&!cdEl.classList.contains('X')){cdEl.style.width=ed.w+'px';cdEl.style.height=ed.h+'px'}
     }
   });
-  gG.clearRect(0,0,W,H);
+  drawGrid();
   drawEdges();
   const zp=Math.round(cam.z*100)+'%';if(zp!==_zp){$('#zp').textContent=zp;_zp=zp}
 }
 function edgeList(){
   const ids=Object.keys(S.pos).filter(visible);const set=new Set(ids);const out=[];const seen=new Set();
   ids.forEach(a=>{const p=S.parent[a];if(p&&!isMore(a)&&set.has(p)){seen.add([a,p].sort().join());out.push([p,a])}});
-  ids.filter(a=>!isMore(a)).forEach(a=>REL[a].forEach(([b,w])=>{if(w>=.97&&set.has(b)&&a<b&&!seen.has([a,b].join())){seen.add([a,b].join());out.push([a,b])}}));
+  const fcs=new Set([S.sel,S.hover,S.hlOwner,S.spot&&S.spot.owner].filter(Boolean));
+  ids.filter(a=>!isMore(a)).forEach(a=>REL[a].forEach(([b,w])=>{if(w>=.97&&set.has(b)&&a<b&&(fcs.has(a)||fcs.has(b))&&!seen.has([a,b].join())){seen.add([a,b].join());out.push([a,b])}}));
   for(let i=0;i+1<S.path.length;i++){const a=S.path[i],b=S.path[i+1];if(set.has(a)&&set.has(b))out.push([a,b,'path'])}
   if(S.spot&&set.has(S.spot.owner))S.spot.ids.forEach(b=>{if(b!==S.spot.owner&&set.has(b)){const k=[S.spot.owner,b].sort().join();if(!seen.has(k)){seen.add(k);out.push([S.spot.owner,b])}}});
   // 방금 펼친 노드는 전부 선으로 잇는다 — 무엇이 펼쳐졌는지 보이게
@@ -991,6 +1000,58 @@ function milky(pts,P,Q,idx,now,bf,warm,w){
   gE.globalAlpha=1;
 }
 S.lines=true;try{S.lines=localStorage.getItem('hg_lines')!=='0'}catch(e){}
+
+/* ═════════ 지구본 격자 — 확대했을 때만 은은하게 나타나 구 형태(공간감)를 알려준다 ═════════ */
+const GS=165;   // 격자 간격(세계 좌표). 연결선도 이 선 위로 모여 달린다
+function drawGrid(){
+  gG.clearRect(0,0,W,H);
+  const a0=DK;if(a0<.02||S.lines===false&&false)return;
+  const k=NSV(),z=cam.z*k,R=Math.hypot(W,H)*.52,ext=1.9*R/z;   // 화면 반지름 1.9배까지만 그린다
+  const x0=Math.floor((cam.x-ext)/GS)*GS,x1=cam.x+ext,y0=Math.floor((cam.y-ext)/GS)*GS,y1=cam.y+ext;
+  const N=Math.max(60,Math.min(240,Math.round(ext*2*z/12)));
+  // 선 대신 격자의 교차점만 점으로 찍는다 — 연결선과 겹쳐 보이지 않으면서 구면의 공간감만 남긴다
+  gG.save();gG.fillStyle='rgba(205,212,255,1)';gG.globalAlpha=.7*a0;
+  gG.beginPath();
+  for(let x=Math.floor((cam.x-ext)/GW)*GW-GW/2;x<=cam.x+ext;x+=GW)for(let y=Math.floor((cam.y-ext)/GH)*GH-GH/2;y<=cam.y+ext;y+=GH){   // 점은 카드 칸의 꼭짓점(카드 사이 빈 곳)에 찍어, 카드에 가려지지 않게 한다
+
+    const p=proj(x,y,0);if(p.r>.8)continue;const rd=1.6*(1-p.r*.5);gG.moveTo(p.x+rd,p.y);gG.arc(p.x,p.y,rd,0,Math.PI*2)}
+  gG.fill();
+  // 가장자리로 갈수록 사라지게(지구본 둘레가 어두워지는 느낌)
+  gG.globalAlpha=1;gG.globalCompositeOperation='destination-in';
+  const cx=W/2-fsh,cy=H/2,gr=gG.createRadialGradient(cx,cy,R*.04,cx,cy,Math.max(10,R*.8/(1+DK*.64)));
+  gr.addColorStop(0,'rgba(0,0,0,.8)');gr.addColorStop(.6,'rgba(0,0,0,1)');gr.addColorStop(.97,'rgba(0,0,0,.6)');gr.addColorStop(1,'rgba(0,0,0,0)');
+  gG.fillStyle=gr;gG.fillRect(0,0,W,H);
+  gG.globalCompositeOperation='source-over';
+  gG.restore();
+}
+/* 연결선 경로: 격자선에 걸쳐 달리도록 중간 구간을 가까운 격자선에 맞춘다(같은 쪽으로 가는 선이 한 줄로 모여 복잡함이 줄어든다) */
+const GRID_ROUTE=false;   // true: 격자선을 따라 꺾이는 노선도식(선이 카드 뒤로 길게 지나가 오히려 복잡해 보여 끔)
+function routeW(wa,wb,a,b,kind){
+  if(!GRID_ROUTE){   // 별자리처럼 두 카드 사이를 잇는 아주 살짝 휜 선
+    const L=Math.hypot(wb.x-wa.x,wb.y-wa.y)||1,nx=-(wb.y-wa.y)/L,ny=(wb.x-wa.x)/L,hs=((hue(a)*31+hue(b)*17)%100)/100,cv=0;   // 모든 선을 곧게(제각각 휘면 어수선해 보임) — 곡면 투영으로 생기는 완만한 휨만 남긴다
+    
+    const cx=(wa.x+wb.x)/2+nx*cv,cy=(wa.y+wb.y)/2+ny*cv,n=Math.max(8,Math.ceil(L/22)),r=[];
+    for(let i=0;i<=n;i++){const t=i/n,u=1-t;r.push({x:u*u*wa.x+2*u*t*cx+t*t*wb.x,y:u*u*wa.y+2*u*t*cy+t*t*wb.y})}
+    return r}
+  const dx=wb.x-wa.x,dy=wb.y-wa.y;let pts;
+  if(Math.abs(dx)>=Math.abs(dy)){
+    const lo=Math.min(wa.x,wb.x),hi=Math.max(wa.x,wb.x);let m=Math.round((wa.x+wb.x)/2/GS)*GS;if(!(m>lo+34&&m<hi-34))m=(wa.x+wb.x)/2;
+    pts=[wa,{x:m,y:wa.y},{x:m,y:wb.y},wb]}
+  else{
+    const lo=Math.min(wa.y,wb.y),hi=Math.max(wa.y,wb.y);let m=Math.round((wa.y+wb.y)/2/GS)*GS;if(!(m>lo+34&&m<hi-34))m=(wa.y+wb.y)/2;
+    pts=[wa,{x:wa.x,y:m},{x:wb.x,y:m},wb]}
+  // 모서리를 둥글게
+  const out=[pts[0]];
+  for(let k=1;k<pts.length-1;k++){
+    const P0=pts[k-1],P1=pts[k],P2=pts[k+1],l1=Math.hypot(P0.x-P1.x,P0.y-P1.y),l2=Math.hypot(P2.x-P1.x,P2.y-P1.y),r=Math.min(46,l1/2,l2/2);
+    if(r<2){out.push(P1);continue}
+    const a={x:P1.x+(P0.x-P1.x)/l1*r,y:P1.y+(P0.y-P1.y)/l1*r},b={x:P1.x+(P2.x-P1.x)/l2*r,y:P1.y+(P2.y-P1.y)/l2*r};
+    for(let t=0;t<=1.001;t+=1/6){const u=1-t;out.push({x:u*u*a.x+2*u*t*P1.x+t*t*b.x,y:u*u*a.y+2*u*t*P1.y+t*t*b.y})}}
+  out.push(pts[pts.length-1]);
+  // 곡면에서 휘어 보이도록 촘촘히 나눈다
+  const res=[out[0]];for(let k=1;k<out.length;k++){const p=out[k-1],q=out[k],l=Math.hypot(q.x-p.x,q.y-p.y),n=Math.max(1,Math.ceil(l/22));for(let s=1;s<=n;s++)res.push({x:p.x+(q.x-p.x)*s/n,y:p.y+(q.y-p.y)*s/n})}
+  return res;
+}
 function drawEdges(){
   if(S.lines===false){gE.clearRect(0,0,W,H);return}
   gE.clearRect(0,0,W,H);const PO=[];const nowMs=performance.now();const hot=S.spot?S.spot.owner:(S.hover&&!isMore(S.hover)?S.hover:S.sel);const now=performance.now()/1000;
@@ -999,28 +1060,23 @@ function drawEdges(){
     const sa=pa.s*cardM(pa.r)*szS(a)*(S.sel===a?1.03:1),sb=pb.s*cardM(pb.r)*szS(b)*(S.sel===b?1.03:1);
     const hwa=da.w/2*sa,hwb=db.w/2*sb,hha=da.h/2*sa,hhb=db.h/2*sb;
     const fa=floatOff(a),fb=floatOff(b);pa.x+=fa.x;pa.y+=fa.y;pb.x+=fb.x;pb.y+=fb.y;
-    const dx=pb.x-pa.x,dy=pb.y-pa.y;let P,Q,h,sg;
-    if(Math.abs(dx)>(hwa+hwb)*.5){sg=dx>0?1:-1;h=true;P={x:pa.x+sg*hwa,y:pa.y};Q={x:pb.x-sg*hwb,y:pb.y}}
-    else{sg=dy>0?1:-1;h=false;P={x:pa.x,y:pa.y+sg*hha};Q={x:pb.x,y:pb.y-sg*hhb}}
     if(S.intro){const t=performance.now()-S.intro.t0;if(t<Math.max(S.intro.at[a]??0,S.intro.at[b]??0)-120)return}
     const on=kind!=='more'&&hot&&(S.spot?((a===S.spot.owner&&S.spot.ids.has(b))||(b===S.spot.owner&&S.spot.ids.has(a))):(a===hot||b===hot));   // 펼침·더보기 직후에는 새로 들어온 노드의 선만 밝게
     // 카드가 나타나는 속도(0.3초)와 똑같이 선도 함께 나타난다 — 선이 먼저 뻗어 있지 않게
     const bd=S.born[b]===undefined?1:Math.max(0,Math.min(1,(nowMs-S.born[b])/300)),bf=bd*bd*(3-2*bd);
-    // 곡선: 카드 변에서 곧게 나와 부드럽게 휘어 들어간다(직선 노선도 방식은 orthoRoute 로 남겨 둠)
-    // 별자리처럼: 두 카드의 중심을 향해 나와서, 아주 살짝 휘어진 가는 선으로 이어진다(끝은 카드 쪽에서 서서히 사라진다)
-    const exitPt=(cx,cy,hw,hh2,tx,ty)=>{const ddx=tx-cx,ddy=ty-cy;const t=Math.min(hw/Math.max(Math.abs(ddx),1e-3),hh2/Math.max(Math.abs(ddy),1e-3));return {x:cx+ddx*t,y:cy+ddy*t}};
-    // 노드형에서 선택한 노드(곰발바닥)는 상자가 아니라 원이 본체라서, 선이 원 둘레에 닿도록 한다(상자 가장자리에서 끊겨 보이지 않게)
+    // 선은 격자선을 따라 달린다: 세계 좌표에서 경로를 만들고, 한 점씩 곡면으로 투영해 지구본의 위·경도선처럼 휘어 보이게 한다
+    const wr=routeW(wa,wb,a,b,kind),pfa=depthF(a),pfb=depthF(b);
+    let sp=wr.map((q,i)=>{const t=i/(wr.length-1),pp=proj(q.x,q.y,pfa+(pfb-pfa)*t);return {x:pp.x+fa.x+(fb.x-fa.x)*t,y:pp.y+fa.y+(fb.y-fa.y)*t}});
+    const ins=(kind==='path'||on)?11:0;
     const pawA=S.view==='node'&&S.sel===a,pawB=S.view==='node'&&S.sel===b;
-    const circExit=(c,t,R)=>{const vx=t.x-c.x,vy=t.y-c.y,l=Math.hypot(vx,vy)||1;return {x:c.x+vx/l*R,y:c.y+vy/l*R}};
-    P=pawA?circExit(pa,pb,60*sa):exitPt(pa.x,pa.y,hwa,hha,pb.x,pb.y);
-    Q=pawB?circExit(pb,pa,60*sb):exitPt(pb.x,pb.y,hwb,hhb,pa.x,pa.y);
-    if(kind==='path'||on){   // 선 끝이 둥근 카드 모서리에서 떠 보이지 않게 카드 안쪽(카드가 덮는 자리)까지 넣되, 곡선은 이 끝점으로 다시 계산한다
-      const inw=(o,c,d)=>{const vx=c.x-o.x,vy=c.y-o.y,l=Math.hypot(vx,vy)||1;return {x:o.x+vx/l*d,y:o.y+vy/l*d}};
-      P=inw(P,pa,11);Q=inw(Q,pb,11)}
-    const LL=Math.hypot(Q.x-P.x,Q.y-P.y)||1,nx=-(Q.y-P.y)/LL,ny=(Q.x-P.x)/LL;
-    const hs=((hue(a)*31+hue(b)*17)%100)/100,cv=(hs-.5)*2*LL*(kind==='path'?.05:.17);   // 경로선은 거의 곧게
-    const cpx=(P.x+Q.x)/2+nx*cv,cpy=(P.y+Q.y)/2+ny*cv;
-    const pts=[];for(let i=0;i<=40;i++){const t=i/40,u=1-t;pts.push({x:u*u*P.x+2*u*t*cpx+t*t*Q.x,y:u*u*P.y+2*u*t*cpy+t*t*Q.y})}const poly=pts;
+    const inA=q=>pawA?Math.hypot(q.x-pa.x,q.y-pa.y)<60*sa-ins*.5:(Math.abs(q.x-pa.x)<Math.max(2,hwa-ins)&&Math.abs(q.y-pa.y)<Math.max(2,hha-ins));
+    const inB=q=>pawB?Math.hypot(q.x-pb.x,q.y-pb.y)<60*sb-ins*.5:(Math.abs(q.x-pb.x)<Math.max(2,hwb-ins)&&Math.abs(q.y-pb.y)<Math.max(2,hhb-ins));
+    let i0=0,i1=sp.length-1;while(i0<i1&&inA(sp[i0]))i0++;while(i1>i0&&inB(sp[i1]))i1--;
+    i0=Math.max(0,i0-1);i1=Math.min(sp.length-1,i1+1);   // 카드 경계에 닿도록 한 점씩 안쪽 포함
+    if(i1-i0<2)return;
+    const pts=sp.slice(i0,i1+1),poly=pts;const P=pts[0],Q=pts[pts.length-1];
+    const qd=(c,p)=>Math.round(Math.atan2(p.y-c.y,p.x-c.x)/(Math.PI/2))*(Math.PI/2);
+    const outA=qd(pa,P),outB=qd(pb,Q);
     if(kind==='path'){
       gE.lineCap='round';gE.lineJoin='round';
       gE.beginPath();pts.forEach((r,i)=>i?gE.lineTo(r.x,r.y):gE.moveTo(r.x,r.y));
@@ -1030,8 +1086,8 @@ function drawEdges(){
     // 기본: 머리카락처럼 가는 선
     gE.setLineDash(kind==='more'?[3,6]:[]);
     gE.lineJoin='round';gE.beginPath();poly.forEach((r,i)=>i?gE.lineTo(r.x,r.y):gE.moveTo(r.x,r.y));
-    {const gr=gE.createLinearGradient(P.x,P.y,Q.x,Q.y);gr.addColorStop(0,'rgba(190,190,196,0)');gr.addColorStop(.24,'rgba(190,190,196,1)');gr.addColorStop(.76,'rgba(190,190,196,1)');gr.addColorStop(1,'rgba(190,190,196,0)');gE.strokeStyle=gr}gE.lineWidth=[.32,.45,.62][lv];
-    gE.globalAlpha=bf*(on?0:(hot?.04:(kind==='more'?.16:.17*[.75,1,1.25][lv])));if(!on)gE.stroke();gE.setLineDash([]);
+    {const gr=gE.createLinearGradient(P.x,P.y,Q.x,Q.y);gr.addColorStop(0,'rgba(190,190,196,0)');gr.addColorStop(.24,'rgba(190,190,196,1)');gr.addColorStop(.76,'rgba(190,190,196,1)');gr.addColorStop(1,'rgba(190,190,196,0)');gE.strokeStyle=gr}gE.lineWidth=kind==='more'?.55:[.32,.45,.62][lv];
+    gE.globalAlpha=bf*(on?0:(hot?(kind==='more'?.2:.04):(kind==='more'?.26:.17*[.75,1,1.25][lv])));if(!on)gE.stroke();gE.setLineDash([]);
     // 연결된 선: 선 전체가 옅게 빛나고, 가장 밝은 부분이 아주 천천히 오간다(머리·꼬리·번짐 없음)
     if(on){
       const ph=.5+.62*Math.sin(now*.5+idx*1.3);
@@ -1042,10 +1098,9 @@ function drawEdges(){
     }
     // 포트 — 카드 가장자리에 안쪽으로 파인 반원(펀치 구멍). 카드 위 캔버스에 따로 그린다
     if(kind!=='more'){
-      const dirA=h?(sg>0?0:Math.PI):(sg>0?Math.PI/2:-Math.PI/2);
-      const gr=on?1.2:1,mul=on?1:(hot?.3:.9);
-      PO.push({p:P,a:dirA+Math.PI,r:Math.max(2.6,Math.min(5,4.2*sa))*gr,c:COL[N[a].type],al:mul*cardOp(a)});
-      PO.push({p:Q,a:dirA,r:Math.max(2.6,Math.min(5,4.2*sb))*gr,c:COL[N[b].type],al:mul*cardOp(b)});
+            const gr=on?1.2:1,mul=on?1:(hot?.3:.9);
+      PO.push({p:P,a:outA+Math.PI,r:Math.max(2.6,Math.min(5,4.2*sa))*gr,c:COL[N[a].type],al:mul*cardOp(a)});
+      PO.push({p:Q,a:outB+Math.PI,r:Math.max(2.6,Math.min(5,4.2*sb))*gr,c:COL[N[b].type],al:mul*cardOp(b)});
     }
     gE.globalAlpha=1;
   });
@@ -1196,7 +1251,8 @@ function select(id){
   render();openPanel();
   focusNode(id,true);
 }
-function openPanel(){const lp=$('#lp');if(mobile()&&!lp.classList.contains('on'))lp.classList.add('snap1');lp.classList.add('on');document.body.classList.toggle('sheet',mobile());document.body.classList.toggle('pnl',!mobile())}
+function openPanel(){const lp=$('#lp');if(mobile()&&!lp.classList.contains('on'))lp.classList.add('snap1');{const gd=document.getElementById('lgc');if(!lp.classList.contains('on')&&gd&&!gd.classList.contains('closed')){gd.classList.add('closed');const gh=document.getElementById('lgHead');if(gh)gh.setAttribute('aria-expanded','false')}}   /* 상세 패널이 열릴 때 펼쳐진 가이드 박스가 패널을 덮지 않게 접는다(저장값은 건드리지 않음) */
+lp.classList.add('on');document.body.classList.toggle('sheet',mobile());document.body.classList.toggle('pnl',!mobile())}
 function closePanel(){S.panel=false;$('#lp').classList.remove('on','snap1','snap2');document.body.classList.remove('sheet','pnl')}
 $('#grab').addEventListener('click',()=>{if(mobile())$('#lp').classList.toggle('snap2')});
 function renderPanel(){
@@ -1300,6 +1356,7 @@ function start(){
 $('#seg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#seg button').forEach(x=>x.classList.toggle('on',x===b));start()});
 addEventListener('keydown',e=>{if(document.body.classList.contains('lock'))return;if(e.key==='Escape'&&!$('#scrim').classList.contains('on')){closePanel();S.sel=null;S.spot=null;render()}});
 const _lg=$('#lgc');try{if(localStorage.getItem('hg_lgc')==='0'){_lg.classList.add('closed');$('#lgHead').setAttribute('aria-expanded','false')}}catch(e){}
+try{if(localStorage.getItem('hg_lgc')===null&&innerHeight<820){_lg.classList.add('closed');$('#lgHead').setAttribute('aria-expanded','false')}}catch(e){if(innerHeight<820){_lg.classList.add('closed')}}   // 작은 화면에서는 가이드 박스를 처음부터 접어 둔다
 function syncZw(){const z=document.querySelector('.br .zm');if(z&&z.offsetWidth)_lg.style.setProperty('--zw',z.offsetWidth+'px')}
 syncZw();addEventListener('resize',syncZw);
 $('#lgHead').addEventListener('click',()=>{const c=_lg.classList.toggle('closed');$('#lgHead').setAttribute('aria-expanded',String(!c));try{localStorage.setItem('hg_lgc',c?'0':'1')}catch(e){}});
